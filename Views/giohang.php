@@ -172,9 +172,22 @@ include_once 'includes/header.php';
 
             <div class="cart-summary">
                 <div class="total-price">Tổng cộng: <?php echo number_format($tongTien, 0, ',', '.'); ?> VNĐ</div>
-                <a href="../index.php" style="margin-right: 20px; color: #666; text-decoration: none;">← Tiếp tục mua sắm</a>
-                <button type="submit" class="btn-checkout" style="border: none; cursor: pointer; margin-right: 10px;">CẬP NHẬT GIỎ HÀNG</button>
-                <a href="thanhtoan.php" class="btn-checkout">TIẾN HÀNH THANH TOÁN</a>
+
+                <div style="display: flex; justify-content: flex-end; align-items: center; gap: 15px;">
+                    <a href="../index.php" style="color: #666; text-decoration: none;">← Tiếp tục mua sắm</a>
+
+                    <button type="submit" name="action" value="update" class="btn-checkout" style="border: none; cursor: pointer; background: #4CAF50;">
+                        CẬP NHẬT GIỎ HÀNG
+                    </button>
+
+                    <?php if (isset($_SESSION['user_id'])): ?>
+                        <a href="thanhtoan.php" class="btn-checkout">TIẾN HÀNH THANH TOÁN</a>
+                    <?php else: ?>
+                        <a href="Taikhoan/login.php?redirect=giohang" class="btn-checkout" style="background: #f57c00;">
+                            ĐĂNG NHẬP ĐỂ THANH TOÁN
+                        </a>
+                    <?php endif; ?>
+                </div>
             </div>
         </form>
     <?php else: ?>

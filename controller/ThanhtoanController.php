@@ -25,8 +25,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     // 2. Lưu vào bảng donhang
-    $sqlDH = "INSERT INTO donhang (MaKH, NgayDat, TongTien, TrangThai) VALUES (?, NOW(), ?, 'Chờ xử lý')";
-    $db->query($sqlDH, [$maKH, $tongTien]);
+    $sqlDH = "INSERT INTO donhang (MaKH, HoTenNguoiNhan, SDTNguoiNhan, DiaChiGiaoHang, GhiChu, NgayDat, TongTien, TrangThai) 
+          VALUES (?, ?, ?, ?, ?, NOW(), ?, 'Chờ xử lý')";
+    $db->query($sqlDH, [$maKH, $hoTen, $sdt, $diaChi, $ghiChu, $tongTien]);
     $maDH = $db->lastInsertId();
 
     // 3. Lưu chi tiết đơn hàng (chitietdh)
@@ -39,7 +40,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($maKH) {
         $ghModel->xoa_gio_hang($gioHang['MaGH']);
     }
-
-    // 5. Chuyển hướng đến trang thông báo thành công
-    echo "<script>alert('Đặt hàng thành công! Cảm ơn bạn.'); window.location.href='../index.php';</script>";
+    header("Location: ../Views/thanhcong.php?madh=" . $maDH);
+    exit();
 }

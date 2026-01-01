@@ -2,7 +2,6 @@
 // Views/Taikhoan/login.php
 session_start();
 
-// Sử dụng __DIR__ để xác định chính xác đường dẫn đến thư mục classes
 require_once __DIR__ . '/../../classes/DB.class.php';
 require_once __DIR__ . '/../../classes/Giohang.class.php';
 require_once __DIR__ . '/../../classes/Chitiet_Giohang.class.php';
@@ -11,14 +10,12 @@ require_once __DIR__ . '/../../classes/Sanpham.class.php';
 $error = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // 1. Khởi tạo đối tượng Db (Khớp với tên class trong DB.class.php của bạn)
+
     $db = new Db();
 
     $username = $_POST['username'];
     $password = $_POST['password'];
 
-    // 2. Kiểm tra tài khoản trong bảng taikhoan
-    // Lưu ý: Sử dụng phương thức query() có sẵn trong class Db của bạn
     $query = "SELECT tk.*, kh.MaKH, kh.HoTen FROM taikhoan tk 
           LEFT JOIN khachhang kh ON tk.MaTK = kh.MaTK 
           WHERE tk.TenDangNhap = ? AND tk.MatKhau = ?";
@@ -27,17 +24,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $user = $stmt->fetch();
 
     if ($user) {
-        // Đăng nhập thành công
-        $_SESSION['user_id'] = $user['MaKH'];
 
+        $_SESSION['user_id'] = $user['MaKH'];
         $_SESSION['user_name'] = !empty($user['HoTen']) ? $user['HoTen'] : $user['TenDangNhap'];
-        // 3. LOGIC ĐỒNG BỘ GIỎ HÀNG: Chuyển từ Session vào Database
+
         if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
             $ghModel = new Giohang();
             $ctghModel = new Chitiet_Giohang();
             $spModel = new Sanpham();
-
-            // Lấy hoặc tạo mới giỏ hàng trong DB cho khách hàng này
             $gioHang = $ghModel->lay_theo_khach_hang($user['MaKH']);
             if (!$gioHang) {
                 $maGH = $ghModel->tao_moi($user['MaKH']);
@@ -48,21 +42,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             foreach ($_SESSION['cart'] as $maSP => $sl) {
                 $sp = $spModel->getById($maSP);
                 if ($sp) {
-                    // Thêm sản phẩm vào bảng chitietgh
                     $ctghModel->them_san_pham($maGH, $maSP, $sl, $sp['Gia']);
                 }
             }
-            // Tính lại tổng tiền sau khi đồng bộ
-            // Bạn cần kiểm tra xem trong class Giohang có hàm tinh_lai_tong_tien chưa
+            // Tính lại tổng tiền 
             if (method_exists($ghModel, 'tinh_lai_tong_tien')) {
                 $ghModel->tinh_lai_tong_tien($maGH);
             }
-
-            // Xóa giỏ hàng tạm sau khi đã lưu vào DB
             unset($_SESSION['cart']);
         }
+        if (isset($_GET['redirect']) && $_GET['redirect'] == 'giohang') {
 
-        header("Location: ../../index.php");
+            header("Location: ../giohang.php");
+        } else {
+
+            header("Location: ../../index.php");
+        }
         exit();
     } else {
         $error = "Tên đăng nhập hoặc mật khẩu không đúng!";

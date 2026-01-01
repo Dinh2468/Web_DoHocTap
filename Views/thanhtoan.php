@@ -11,7 +11,15 @@ $spModel = new Sanpham();
 
 $ds_sanpham = [];
 $tongTien = 0;
+$userInfo = null;
 
+if (!isset($_SESSION['user_id'])) {
+    header("Location: Taikhoan/login.php");
+    exit();
+}
+if (isset($_SESSION['user_id'])) {
+    $userInfo = $spModel->query("SELECT * FROM khachhang WHERE MaKH = ?", [$_SESSION['user_id']])->fetch();
+}
 // Lấy dữ liệu giỏ hàng tương tự file cũ của bạn
 if (isset($_SESSION['user_id'])) {
     $gioHang = $ghModel->lay_theo_khach_hang($_SESSION['user_id']);
@@ -160,7 +168,7 @@ include_once 'includes/header.php';
 <div class="checkout-container">
     <div class="checkout-left">
         <div class="shop-name">THIÊN ĐƯỜNG DỤNG CỤ HỌC TẬP</div>
-        <div class="breadcrumb">Giỏ hàng > Thông tin giao hàng > Phương thức thanh toán</div>
+        <!-- <div class="breadcrumb">Giỏ hàng > Thông tin giao hàng > Phương thức thanh toán</div> -->
 
         <div class="section-title">Thông tin giao hàng</div>
         <?php if (!isset($_SESSION['user_id'])): ?>
@@ -169,23 +177,27 @@ include_once 'includes/header.php';
 
         <form action="../controller/ThanhtoanController.php" method="POST">
             <div class="form-group">
-                <input type="text" name="hoTen" class="form-control" placeholder="Họ và tên" required>
+                <input type="text" name="hoTen" class="form-control" placeholder="Họ và tên"
+                    value="<?php echo htmlspecialchars($userInfo['HoTen'] ?? ''); ?>" required>
             </div>
             <div class="form-row">
                 <div class="form-group" style="flex: 2;">
-                    <input type="email" name="email" class="form-control" placeholder="Email">
+                    <input type="email" name="email" class="form-control" placeholder="Email"
+                        value="<?php echo htmlspecialchars($userInfo['Email'] ?? ''); ?>">
                 </div>
                 <div class="form-group" style="flex: 1;">
-                    <input type="text" name="sdt" class="form-control" placeholder="Số điện thoại" required>
+                    <input type="text" name="sdt" class="form-control" placeholder="Số điện thoại"
+                        value="<?php echo htmlspecialchars($userInfo['SDT'] ?? ''); ?>" required>
                 </div>
             </div>
             <div class="form-group">
-                <input type="text" name="diaChi" class="form-control" placeholder="Địa chỉ" required>
+                <input type="text" name="diaChi" class="form-control" placeholder="Địa chỉ"
+                    value="<?php echo htmlspecialchars($userInfo['DiaChi'] ?? ''); ?>" required>
             </div>
             <div class="form-group">
                 <textarea name="ghiChu" class="form-control" placeholder="Ghi chú (tùy chọn)" style="height: 100px;"></textarea>
             </div>
-            <button type="submit" class="btn-submit">TIẾP TỤC ĐẾN PHƯƠNG THỨC THANH TOÁN</button>
+            <button type="submit" class="btn-submit">THANH TOÁN</button>
         </form>
     </div>
 
