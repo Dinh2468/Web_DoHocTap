@@ -19,6 +19,7 @@ if (isset($_GET['search']) && !empty($_GET['search'])) {
 }
 
 $ds_thuonghieu = $thModel->lay_tat_ca();
+$ds_sanpham_hot = $spModel->getHotProducts(8);
 
 // Nạp Header
 include_once 'Views/includes/header.php';
@@ -38,53 +39,69 @@ include_once 'Views/includes/header.php';
     </div>
 </section>
 
-<div class="container">
-    <h3 class="section-title"><?php echo $title; ?></h3>
-
+<div class="container section-wrapper">
+    <div class="section-header">
+        <h3 class="title-left" style="color: #2E7D32;">SẢN PHẨM MỚI</h3>
+        <a href="Views/Sanpham/sanpham.php" class="view-more-link">Xem tất cả »</a>
+    </div>
     <div class="product-grid">
+        <?php
+        // Lấy 4 hoặc 8 sản phẩm mới nhất
+        $sp_moi = array_slice($ds_sanpham, 0, 4);
+        foreach ($sp_moi as $sp):
+            include 'Views/Sanpham/the_sanpham.php';
+        endforeach;
+        ?>
+    </div>
+</div>
 
-        <?php if ($ds_sanpham): ?>
+<div class="container section-wrapper">
+    <div class="section-header">
+        <h3 class="title-left" style="color: #d32f2f;">SẢN PHẨM HOT 🔥</h3>
+        <a href="Views/Sanpham/sanpham.php" class="view-more-link">Xem thêm »</a>
+    </div>
+    <div class="slider-outer">
+        <button class="nav-arrow prev" onclick="moveSlider('sliderHot', -1)">❮</button>
+        <div id="sliderHot" class="product-slider">
+            <?php if ($ds_sanpham_hot): ?>
+                <?php foreach ($ds_sanpham_hot as $sp): ?>
+                    <div class="slider-item">
+                        <?php include 'Views/Sanpham/the_sanpham.php'; ?>
+                    </div>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <p>Đang cập nhật sản phẩm nổi bật...</p>
+            <?php endif; ?>
+        </div>
+        <button class="nav-arrow next" onclick="moveSlider('sliderHot', 1)">❯</button>
+    </div>
+</div>
+
+<div class="container section-wrapper">
+    <div class="section-header">
+        <h3 class="title-left" style="color: #e65100;">SẢN PHẨM KHUYẾN MÃI</h3>
+        <a href="Views/Sanpham/sanpham.php" class="view-more-link">Xem thêm các sản phẩm khác »</a>
+    </div>
+    <div class="slider-outer">
+        <button class="nav-arrow prev" onclick="moveSlider('sliderGiaTot', -1)">❮</button>
+        <div id="sliderGiaTot" class="product-slider">
             <?php foreach ($ds_sanpham as $sp): ?>
-                <div class="product-card">
-                    <a href="/Web_DoHocTap/Views/Sanpham/chitiet.php?id=<?php echo $sp['MaSP']; ?>" style="text-decoration: none; color: inherit;">
-                        <img src="assets/images/Sanpham/<?php echo $sp['HinhAnh']; ?>"
-                            class="product-img">
-
-
-                        <div class="product-name"><?php echo $sp['TenSP']; ?></div>
-
-                        <div style="color: #FFD700; font-size: 12px; margin-bottom: 5px;">
-                            <?php
-                            $sao = $dgModel->tinh_sao_trung_binh($sp['MaSP']);
-                            echo str_repeat('★', floor($sao)) . str_repeat('☆', 5 - floor($sao));
-                            ?>
-                        </div>
-
-                        <div class="product-price">
-                            <?php echo number_format($sp['Gia'], 0, ',', '.'); ?>đ
-                        </div>
-                    </a>
-                    <form action="/Web_DoHocTap/controller/GiohangController.php" method="POST" class="add-to-cart-quick">
-                        <input type="hidden" name="maSP" value="<?php echo $sp['MaSP']; ?>">
-                        <input type="hidden" name="sl" value="1">
-                        <input type="hidden" name="ajax" value="1"> <button type="submit" class="btn-buy-now">MUA</button>
-                    </form>
+                <div class="slider-item">
+                    <div class="discount-badge">-20%</div>
+                    <?php include 'Views/Sanpham/the_sanpham.php'; ?>
                 </div>
             <?php endforeach; ?>
-        <?php else: ?>
-            <p style="grid-column: span 4; text-align: center;">Không tìm thấy sản phẩm nào.</p>
-        <?php endif; ?>
-    </div>
-
-
-    <h3 class="section-title">Thương hiệu đối tác</h3>
-    <div class="brands-row">
-        <?php foreach ($ds_thuonghieu as $th): ?>
-            <div class="brand-box"><?php echo $th['TenTH']; ?></div>
-        <?php endforeach; ?>
+        </div>
+        <button class="nav-arrow next" onclick="moveSlider('sliderGiaTot', 1)">❯</button>
     </div>
 </div>
 <script>
+    function moveSlider(sliderId, direction) {
+        const slider = document.getElementById(sliderId);
+        const scrollAmount = slider.offsetWidth; // Cuộn đúng một khung hình (4 sản phẩm)
+        slider.scrollLeft += direction * scrollAmount;
+    }
+
     // Hàm tạo thông báo nổi ở góc màn hình
     function showToast(message) {
         // Tạo container nếu chưa có

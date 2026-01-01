@@ -64,4 +64,16 @@ class Sanpham extends Db
         $sql = "SELECT * FROM sanpham WHERE MaSP = ?";
         return $this->query($sql, [$id])->fetch();
     }
+    public function getHotProducts($limit = 8)
+    {
+        // Truy vấn lấy sản phẩm có trung bình sao cao nhất
+        $sql = "SELECT s.*, AVG(d.SoSao) as TrungBinhSao 
+            FROM sanpham s 
+            LEFT JOIN danhgia d ON s.MaSP = d.MaSP 
+            GROUP BY s.MaSP 
+            ORDER BY TrungBinhSao DESC 
+            LIMIT $limit";
+        $result = $this->query($sql);
+        return $result->fetchAll(PDO::FETCH_ASSOC);
+    }
 }

@@ -406,6 +406,68 @@
                 font-size: 12px;
             }
 
+            /* Index */
+            .section-wrapper {
+                margin: 30px auto;
+                padding: 20px;
+                background: #fff;
+                border-radius: 8px;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            }
+
+            .section-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-end;
+                margin-bottom: 20px;
+                border-bottom: 2px solid #f0f0f0;
+                padding-bottom: 10px;
+            }
+
+            .product-slider {
+                display: flex;
+                overflow-x: hidden;
+                scroll-behavior: smooth;
+                gap: 15px;
+            }
+
+            .slider-item {
+                min-width: calc(25% - 12px);
+                position: relative;
+            }
+
+            .nav-arrow {
+                position: absolute;
+                width: 35px;
+                height: 35px;
+                background: #fff;
+                border: 1px solid #ddd;
+                border-radius: 50%;
+                cursor: pointer;
+                z-index: 10;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            }
+
+            .prev {
+                left: -18px;
+            }
+
+            .next {
+                right: -18px;
+            }
+
+            .discount-badge {
+                position: absolute;
+                top: 10px;
+                right: 10px;
+                background: #d32f2f;
+                color: #fff;
+                font-size: 11px;
+                padding: 5px;
+                border-radius: 50%;
+                z-index: 5;
+            }
+
             /* --- 8. FOOTER (CHÂN TRANG) --- */
             footer {
                 background-color: var(--primary-color);
