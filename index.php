@@ -1,5 +1,5 @@
 <?php
-// Nạp các lớp cần thiết
+session_start();
 require_once 'classes/Sanpham.class.php';
 require_once 'classes/Thuonghieu.class.php';
 require_once 'classes/Danhgia.class.php';
@@ -31,7 +31,7 @@ include_once 'Views/includes/header.php';
 
         <div class="banner-text">
             <h2>DỤNG CỤ HỌC TẬP CHÍNH HÃNG</h2>
-            <p>Giảm giá 10% cho học sinh, sinh viên khi mua combo!</p>
+
 
         </div>
 
@@ -141,8 +141,25 @@ include_once 'Views/includes/header.php';
                 .then(response => response.text())
                 .then(data => {
                     if (data.trim() === "Thành công") {
+                        // 1. Hiện thông báo Toast
                         const productName = this.closest('.product-card').querySelector('.product-name').innerText;
                         showToast(`Đã thêm "${productName}" vào giỏ hàng!`);
+
+                        // 2. CẬP NHẬT SỐ LƯỢNG NGAY LẬP TỨC (Không cần load lại trang)
+                        let badge = document.querySelector('.cart-badge');
+                        if (!badge) {
+                            // Nếu chưa có badge (giỏ hàng đang trống), tạo mới và gắn vào icon
+                            const cartLink = document.querySelector('a[href*="giohang.php"]');
+                            badge = document.createElement('span');
+                            badge.className = 'cart-badge';
+                            badge.innerText = '0';
+                            cartLink.appendChild(badge);
+                        }
+
+                        // Lấy số lượng hiện tại và cộng thêm số lượng vừa mua
+                        const currentCount = parseInt(badge.innerText);
+                        const addedCount = parseInt(this.querySelector('input[name="sl"]').value) || 1;
+                        badge.innerText = currentCount + addedCount;
                     }
                 });
         };

@@ -1,5 +1,6 @@
 <?php
 // Views/Sanpham/chitiet.php
+session_start();
 require_once '../../classes/Sanpham.class.php';
 require_once '../../classes/Danhgia.class.php';
 

@@ -533,6 +533,101 @@
                     opacity: 1;
                 }
             }
+
+            /* Tên đăng nhập */
+
+            .user-info-nav span {
+                font-size: 14px;
+                background: #E8F5E9;
+                padding: 5px 12px;
+                border-radius: 15px;
+                border: 1px solid #4CAF50;
+            }
+
+            .user-dropdown {
+                position: relative;
+                display: inline-block;
+            }
+
+            .user-name-btn {
+                background: #E8F5E9;
+                padding: 5px 15px;
+                border-radius: 20px;
+                border: 1px solid #4CAF50;
+                color: #2E7D32;
+                font-weight: bold;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                gap: 5px;
+            }
+
+            /* Menu ẩn mặc định */
+            .dropdown-content {
+                display: none;
+                position: absolute;
+                right: 0;
+                background-color: #ffffff;
+                min-width: 160px;
+                box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.1);
+                border-radius: 8px;
+                z-index: 1000;
+                margin-top: 10px;
+                overflow: hidden;
+            }
+
+            /* Link trong menu */
+            .dropdown-content a {
+                color: #333;
+                padding: 12px 16px;
+                text-decoration: none;
+                display: block;
+                font-size: 14px;
+                border-bottom: 1px solid #eee;
+                transition: background 0.2s;
+            }
+
+            .dropdown-content a:hover {
+                background-color: #f1f1f1;
+                color: #2E7D32;
+            }
+
+            /* Hiển thị menu khi có class 'show' */
+            .show {
+                display: block;
+                animation: fadeIn 0.2s ease-out;
+            }
+
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(-10px);
+                }
+
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            .cart-badge {
+                position: absolute;
+                top: -5px;
+                right: -8px;
+                background-color: #d32f2f;
+                color: white;
+                font-size: 10px;
+                font-weight: bold;
+                padding: 2px 4px;
+                border-radius: 50%;
+                min-width: 16px;
+                height: 16px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border: 1px solid white;
+                z-index: 100;
+            }
         </style>
     </head>
 
@@ -547,7 +642,7 @@
         <div class="container nav-content">
             <ul class="nav-links">
                 <li><a href="/Web_DoHocTap/index.php">Trang chủ</a></li>
-                <li><a href="Views/Sanpham/sanpham.php">Sản phẩm</a></li>
+                <li><a href="/Web_DoHocTap/Views/Sanpham/sanpham.php">Sản phẩm</a></li>
                 <li><a href="#">Khuyến mãi</a></li>
                 <li><a href="#gioithieu">Giới thiệu</a></li>
                 <li><a href="#">Tin tức</a></li>
@@ -557,8 +652,69 @@
                 <form action="/Web_DoHocTap/index.php" method="GET">
                     <input type="text" name="search" class="search-box" placeholder="Tìm kiếm bút, vở...">
                 </form>
-                <a href="#" class="btn-login">Đăng nhập</a>
-                <a href="/Web_DoHocTap/Views/giohang.php" style="text-decoration: none;">🛒</a>
+                <?php if (isset($_SESSION['user_id'])): ?>
+                    <div class="user-dropdown">
+                        <div class="user-name-btn" onclick="toggleDropdown()">
+                            Chào, <?php echo htmlspecialchars($_SESSION['user_name']); ?> <span style="font-size: 10px; margin-left: 5px;"></span>
+                        </div>
+                        <div id="myDropdown" class="dropdown-content">
+                            <a href="/Web_DoHocTap/Views/lichsu_donhang.php">📦 Đơn hàng của tôi</a>
+                            <a href="/Web_DoHocTap/Views/Taikhoan/settings.php">⚙️ Cài đặt tài khoản</a>
+                            <a href="/Web_DoHocTap/Views/Taikhoan/logout.php" style="color: #d32f2f;">Logout</a>
+                        </div>
+                    </div>
+                <?php else: ?>
+                    <a href="/Web_DoHocTap/Views/Taikhoan/login.php" class="btn-login">Đăng nhập</a>
+                <?php endif; ?>
+                <a href="/Web_DoHocTap/Views/giohang.php" style="text-decoration: none; position: relative; display: inline-flex; align-items: center; font-size: 22px;">🛒
+                    <?php
+                    $count = 0;
+                    if (isset($_SESSION['user_id'])) {
+                        // Nếu đã ĐĂNG NHẬP: Lấy số lượng từ Database
+                        require_once __DIR__ . '/../../classes/Giohang.class.php';
+                        require_once __DIR__ . '/../../classes/Chitiet_Giohang.class.php';
+
+                        $ghModel = new Giohang();
+                        $ctghModel = new Chitiet_Giohang();
+
+                        $gioHang = $ghModel->lay_theo_khach_hang($_SESSION['user_id']);
+                        if ($gioHang) {
+                            $items = $ctghModel->lay_danh_sach_trong_gio($gioHang['MaGH']);
+                            foreach ($items as $item) {
+                                $count += $item['SoLuong'];
+                            }
+                        }
+                    } else {
+                        // Nếu CHƯA ĐĂNG NHẬP: Lấy từ Session
+                        if (isset($_SESSION['cart'])) {
+                            $count = array_sum($_SESSION['cart']);
+                        }
+                    }
+
+                    if ($count > 0) {
+                        echo "<span class='cart-badge'>$count</span>";
+                    }
+                    ?>
+
+                </a>
             </div>
         </div>
     </nav>
+    <script>
+        function toggleDropdown() {
+            document.getElementById("myDropdown").classList.toggle("show");
+        }
+
+        // Đóng menu nếu người dùng click ra ngoài vùng dropdown
+        window.onclick = function(event) {
+            if (!event.target.matches('.user-name-btn')) {
+                var dropdowns = document.getElementsByClassName("dropdown-content");
+                for (var i = 0; i < dropdowns.length; i++) {
+                    var openDropdown = dropdowns[i];
+                    if (openDropdown.classList.contains('show')) {
+                        openDropdown.classList.remove('show');
+                    }
+                }
+            }
+        }
+    </script>

@@ -5,6 +5,8 @@ require_once '../classes/Sanpham.class.php';
 require_once '../classes/Giohang.class.php';
 require_once '../classes/Chitiet_Giohang.class.php';
 
+$ghModel = new Giohang();
+$ctghModel = new Chitiet_Giohang();
 $spModel = new Sanpham();
 $ds_sanpham = [];
 $tongTien = 0;

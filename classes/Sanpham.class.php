@@ -76,4 +76,78 @@ class Sanpham extends Db
         $result = $this->query($sql);
         return $result->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public function getAll_phantrang($offset, $limit = 21)
+    {
+        $sql = "SELECT * FROM sanpham ORDER BY MaSP DESC LIMIT $offset, $limit";
+        return $this->query($sql)->fetchAll();
+    }
+
+    public function filterAdvanced($maLoai, $priceArr, $brandArr, $offset = null, $limit = null)
+    {
+        $sql = "SELECT * FROM sanpham WHERE 1=1";
+        $params = [];
+
+        if ($maLoai) {
+            $sql .= " AND MaLoai = ?";
+            $params[] = $maLoai;
+        }
+
+        if (!empty($priceArr)) {
+            $priceQueries = [];
+            foreach ($priceArr as $range) {
+                $parts = explode('-', $range);
+                $priceQueries[] = "(Gia >= ? AND Gia <= ?)";
+                $params[] = $parts[0];
+                $params[] = $parts[1];
+            }
+            $sql .= " AND (" . implode(" OR ", $priceQueries) . ")";
+        }
+
+        if (!empty($brandArr)) {
+            $placeholders = implode(',', array_fill(0, count($brandArr), '?'));
+            $sql .= " AND MaTH IN ($placeholders)";
+            $params = array_merge($params, $brandArr);
+        }
+
+        $sql .= " ORDER BY MaSP DESC";
+
+        // Chỉ thêm LIMIT nếu có truyền tham số phân trang
+        if ($limit !== null && $offset !== null) {
+            $sql .= " LIMIT $offset, $limit";
+        }
+
+        return $this->query($sql, $params)->fetchAll();
+    }
+    // Tính tổng số trang
+    public function countAll($maLoai = null, $priceArr = [], $brandArr = [])
+    {
+        $sql = "SELECT COUNT(*) FROM sanpham WHERE 1=1";
+        $params = [];
+        // Copy toàn bộ logic điều kiện lọc từ hàm filterAdvanced vào đây (trước LIMIT)
+        // ... logic filter ...
+        if ($maLoai) {
+            $sql .= " AND MaLoai = ?";
+            $params[] = $maLoai;
+        }
+
+        if (!empty($priceArr)) {
+            $priceQueries = [];
+            foreach ($priceArr as $range) {
+                $parts = explode('-', $range);
+                $priceQueries[] = "(Gia >= ? AND Gia <= ?)";
+                $params[] = $parts[0];
+                $params[] = $parts[1];
+            }
+            $sql .= " AND (" . implode(" OR ", $priceQueries) . ")";
+        }
+
+        if (!empty($brandArr)) {
+            $placeholders = implode(',', array_fill(0, count($brandArr), '?'));
+            $sql .= " AND MaTH IN ($placeholders)";
+            $params = array_merge($params, $brandArr);
+        }
+
+        return $this->query($sql, $params)->fetchColumn();
+    }
 }
