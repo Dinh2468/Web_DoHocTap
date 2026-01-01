@@ -1,22 +1,41 @@
 <?php
 // Views/giohang.php
 session_start();
+require_once '../classes/Sanpham.class.php';
 require_once '../classes/Giohang.class.php';
 require_once '../classes/Chitiet_Giohang.class.php';
 
-$ghModel = new Giohang();
-$ctghModel = new Chitiet_Giohang();
-
-$maKH = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : 1;
-$gioHang = $ghModel->lay_theo_khach_hang($maKH);
+$spModel = new Sanpham();
 $ds_sanpham = [];
 $tongTien = 0;
 
-if ($gioHang) {
-    $ds_sanpham = $ctghModel->lay_danh_sach_trong_gio($gioHang['MaGH']);
-    $tongTien = $gioHang['TongTien'];
+if (isset($_SESSION['user_id'])) {
+    // Lấy từ Database như cũ
+    $maKH = $_SESSION['user_id'];
+    $gioHang = $ghModel->lay_theo_khach_hang($maKH);
+    if ($gioHang) {
+        $ds_sanpham = $ctghModel->lay_danh_sach_trong_gio($gioHang['MaGH']);
+        $tongTien = $gioHang['TongTien'];
+    }
+} else {
+    // Lấy từ SESSION cho khách vãng lai
+    if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
+        foreach ($_SESSION['cart'] as $maSP => $sl) {
+            $sp = $spModel->getById($maSP);
+            if ($sp) {
+                $thanhTien = $sp['Gia'] * $sl;
+                $tongTien += $thanhTien;
+                $ds_sanpham[] = [
+                    'MaSP' => $sp['MaSP'],
+                    'TenSP' => $sp['TenSP'],
+                    'HinhAnh' => $sp['HinhAnh'],
+                    'DonGia' => $sp['Gia'],
+                    'SoLuong' => $sl
+                ];
+            }
+        }
+    }
 }
-
 include_once 'includes/header.php';
 ?>
 
@@ -131,9 +150,15 @@ include_once 'includes/header.php';
                             <td><strong><?php echo $item['TenSP']; ?></strong></td>
                             <td><img src="/Web_DoHocTap/assets/images/Sanpham/<?php echo $item['HinhAnh']; ?>" class="cart-img"></td>
                             <td><?php echo number_format($item['DonGia'], 0, ',', '.'); ?>đ</td>
+
                             <td>
-                                <input type="number" value="<?php echo $item['SoLuong']; ?>" min="1" class="quantity-input">
+                                <input type="number"
+                                    name="sl[<?php echo $item['MaSP']; ?>]"
+                                    value="<?php echo $item['SoLuong']; ?>"
+                                    min="1"
+                                    class="quantity-input">
                             </td>
+
                             <td><strong><?php echo number_format($item['DonGia'] * $item['SoLuong'], 0, ',', '.'); ?>đ</strong></td>
                             <td>
                                 <a href="../controller/GiohangController.php?action=xoa&idsp=<?php echo $item['MaSP']; ?>" class="btn-xoa" onclick="return confirm('Bạn muốn bỏ sản phẩm này?')">Xóa</a>
@@ -145,7 +170,7 @@ include_once 'includes/header.php';
 
             <div class="cart-summary">
                 <div class="total-price">Tổng cộng: <?php echo number_format($tongTien, 0, ',', '.'); ?> VNĐ</div>
-                <a href="index.php" style="margin-right: 20px; color: #666; text-decoration: none;">← Tiếp tục mua sắm</a>
+                <a href="../index.php" style="margin-right: 20px; color: #666; text-decoration: none;">← Tiếp tục mua sắm</a>
                 <button type="submit" class="btn-checkout" style="border: none; cursor: pointer; margin-right: 10px;">CẬP NHẬT GIỎ HÀNG</button>
                 <a href="thanhtoan.php" class="btn-checkout">TIẾN HÀNH THANH TOÁN</a>
             </div>
@@ -153,7 +178,7 @@ include_once 'includes/header.php';
     <?php else: ?>
         <div style="text-align: center; padding: 50px;">
             <p style="font-size: 18px; color: #666;">Giỏ hàng của bạn đang trống.</p>
-            <a href="index.php" class="btn-muangay" style="margin-top: 20px;">QUAY LẠI CỬA HÀNG</a>
+            <a href="../index.php" class="btn-muangay" style="margin-top: 20px;">QUAY LẠI CỬA HÀNG</a>
         </div>
     <?php endif; ?>
 </div>

@@ -220,7 +220,6 @@
 
             .banner-img-side {
                 width: 250px;
-                /* Độ rộng ảnh 2 bên */
                 height: auto;
             }
 
@@ -265,7 +264,7 @@
             .product-grid {
                 display: grid;
                 grid-template-columns: repeat(4, 1fr);
-                /* 4 cột */
+
                 gap: 20px;
                 margin-bottom: 50px;
             }
@@ -282,14 +281,14 @@
 
             .product-card:hover {
                 transform: translateY(-5px);
-                /* Hiệu ứng nổi lên khi di chuột */
+
             }
 
             .product-img {
                 width: 100%;
                 height: 200px;
                 background-color: #ddd;
-                /* Giả lập ảnh */
+
                 margin-bottom: 10px;
             }
 
@@ -301,7 +300,7 @@
 
             .product-price {
                 color: #d32f2f;
-                /* Màu đỏ cho giá tiền */
+
                 font-weight: bold;
             }
 
@@ -321,11 +320,55 @@
                 background-color: #ccc;
             }
 
+            .btn-buy-now {
+                background-color: #4CAF50;
+                /* Màu xanh lá tươi giống Poster */
+                color: white;
+                border: none;
+                padding: 8px 20px;
+                border-radius: 20px;
+                font-weight: bold;
+                cursor: pointer;
+                margin-top: 10px;
+                width: 80%;
+                transition: 0.3s;
+            }
+
+            .btn-buy-now {
+                background-color: #4CAF50;
+                /* Xanh lá tươi đồng bộ Poster */
+                color: white;
+                border: none;
+                padding: 10px 25px;
+                border-radius: 25px;
+                /* Bo tròn hoàn toàn giống nút Mua Ngay */
+                font-weight: bold;
+                font-size: 14px;
+                cursor: pointer;
+                margin-top: 15px;
+                width: auto;
+                /* Chiều rộng tự động theo chữ */
+                min-width: 100px;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                /* Đổ bóng nhẹ cho nổi bật */
+                transition: all 0.3s ease;
+                text-transform: uppercase;
+                /* Chữ in hoa giống Poster */
+                letter-spacing: 1px;
+            }
+
+            .btn-buy-now:hover {
+                background-color: #2E7D32;
+                /* Đậm hơn khi di chuột giống Header */
+                transform: translateY(-2px);
+                /* Nhích nhẹ lên khi hover */
+                box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+            }
+
             /* --- 6. TIN TỨC --- */
             .news-grid {
                 display: grid;
                 grid-template-columns: repeat(3, 1fr);
-                /* 3 cột */
                 gap: 20px;
                 margin-bottom: 50px;
             }
@@ -354,7 +397,7 @@
 
             .brand-box {
                 background-color: var(--accent-color);
-                /* Màu xanh làm nền thương hiệu */
+
                 color: white;
                 flex: 1;
                 padding: 15px;
@@ -392,6 +435,41 @@
 
             .footer-col ul li a:hover {
                 text-decoration: underline;
+            }
+
+            /* Thiết lập vị trí và giao diện cho thông báo ở góc */
+            #toast-container {
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                z-index: 10000;
+            }
+
+            .toast {
+                background-color: #2E7D32;
+                /* Màu xanh lá đậm đồng bộ với Header */
+                color: white;
+                padding: 16px 24px;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                margin-bottom: 10px;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                font-weight: bold;
+                animation: slideIn 0.3s ease-out;
+            }
+
+            @keyframes slideIn {
+                from {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
             }
         </style>
     </head>

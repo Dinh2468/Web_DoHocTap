@@ -23,6 +23,7 @@ $ds_thuonghieu = $thModel->lay_tat_ca();
 // Nạp Header
 include_once 'Views/includes/header.php';
 ?>
+
 <section class="banner">
     <div class="container banner-content">
         <img src="/Web_DoHocTap/assets/images/Home/anhtrai.png" alt="Icon Left" class="banner-img-side">
@@ -63,6 +64,11 @@ include_once 'Views/includes/header.php';
                             <?php echo number_format($sp['Gia'], 0, ',', '.'); ?>đ
                         </div>
                     </a>
+                    <form action="/Web_DoHocTap/controller/GiohangController.php" method="POST" class="add-to-cart-quick">
+                        <input type="hidden" name="maSP" value="<?php echo $sp['MaSP']; ?>">
+                        <input type="hidden" name="sl" value="1">
+                        <input type="hidden" name="ajax" value="1"> <button type="submit" class="btn-buy-now">MUA</button>
+                    </form>
                 </div>
             <?php endforeach; ?>
         <?php else: ?>
@@ -78,7 +84,53 @@ include_once 'Views/includes/header.php';
         <?php endforeach; ?>
     </div>
 </div>
+<script>
+    // Hàm tạo thông báo nổi ở góc màn hình
+    function showToast(message) {
+        // Tạo container nếu chưa có
+        let container = document.getElementById('toast-container');
+        if (!container) {
+            container = document.createElement('div');
+            container.id = 'toast-container';
+            document.body.appendChild(container);
+        }
 
+        // Tạo nội dung thông báo
+        const toast = document.createElement('div');
+        toast.className = 'toast';
+        toast.innerHTML = `✓ ${message}`;
+
+        container.appendChild(toast);
+
+        // Tự động xóa thông báo sau 3 giây
+        setTimeout(() => {
+            toast.style.opacity = '0';
+            toast.style.transform = 'translateX(100%)';
+            toast.style.transition = '0.3s';
+            setTimeout(() => toast.remove(), 300);
+        }, 3000);
+    }
+
+    // Gán sự kiện cho các nút MUA nhanh
+    document.querySelectorAll('.add-to-cart-quick').forEach(form => {
+        form.onsubmit = function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+
+            fetch(this.action, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.text())
+                .then(data => {
+                    if (data.trim() === "Thành công") {
+                        const productName = this.closest('.product-card').querySelector('.product-name').innerText;
+                        showToast(`Đã thêm "${productName}" vào giỏ hàng!`);
+                    }
+                });
+        };
+    });
+</script>
 <?php
 // Nạp Footer
 include_once 'Views/includes/footer.php';

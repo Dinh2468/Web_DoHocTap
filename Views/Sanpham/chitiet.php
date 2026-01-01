@@ -125,12 +125,17 @@ include_once '../../Views/includes/header.php';
                 ?>
             </div>
 
-            <form action="xuly_giohang.php" method="POST">
+            <form id="formadd_giohang" action="../../controller/GiohangController.php" method="POST">
                 <input type="hidden" name="maSP" value="<?php echo $sp['MaSP']; ?>">
+                <input type="hidden" name="ajax" value="1">
                 <label>Số lượng: </label>
                 <input type="number" name="sl" value="1" min="1" style="width: 60px; padding: 10px; margin-right: 10px;">
                 <button type="submit" class="btn-add-cart">THÊM VÀO GIỎ HÀNG</button>
             </form>
+
+            <div id="toast-message" style="display: none; position: fixed; top: 20px; right: 20px; background: #2E7D32; color: white; padding: 15px 25px; border-radius: 5px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 10001; font-weight: bold;">
+                ✓ Đã thêm vào giỏ hàng thành công!
+            </div>
         </div>
     </div>
 
@@ -150,5 +155,30 @@ include_once '../../Views/includes/header.php';
         <?php endif; ?>
     </div>
 </div>
+<script>
+    document.getElementById('formadd_giohang').onsubmit = function(e) {
+        e.preventDefault();
 
+        const formData = new FormData(this);
+        const toast = document.getElementById('toast-message');
+
+        fetch(this.action, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.text())
+            .then(data => {
+                // Kiểm tra dữ liệu trả về từ Controller
+                if (data.trim() === "Thành công") {
+                    // Hiển thị thông báo ở góc
+                    toast.style.display = 'block';
+                    // Tự động ẩn sau 3 giây
+                    setTimeout(() => {
+                        toast.style.display = 'none';
+                    }, 3000);
+                }
+            })
+            .catch(error => console.error('Lỗi:', error));
+    };
+</script>
 <?php include_once '../../Views/includes/footer.php'; ?>
