@@ -1,10 +1,10 @@
 <?php
 session_start();
-require_once '../classes/DB.class.php';
+require_once '../../classes/DB.class.php';
 
 // Kiểm tra nếu chưa đăng nhập thì chuyển về trang login
 if (!isset($_SESSION['user_id'])) {
-    header("Location: Taikhoan/login.php");
+    header("Location: ../Taikhoan/login.php");
     exit();
 }
 
@@ -15,7 +15,7 @@ $maKH = $_SESSION['user_id'];
 $sql = "SELECT * FROM donhang WHERE MaKH = ? ORDER BY NgayDat DESC";
 $donhangs = $db->query($sql, [$maKH])->fetchAll();
 
-include_once 'includes/header.php';
+include_once '../includes/header.php';
 ?>
 
 <div class="container" style="margin-top: 30px; margin-bottom: 50px; min-height: 60vh;">
@@ -62,4 +62,4 @@ include_once 'includes/header.php';
     <?php endif; ?>
 </div>
 
-<?php include_once 'includes/footer.php'; ?>
+<?php include_once '../includes/footer.php'; ?>

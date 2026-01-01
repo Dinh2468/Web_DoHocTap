@@ -40,6 +40,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($maKH) {
         $ghModel->xoa_gio_hang($gioHang['MaGH']);
     }
-    header("Location: ../Views/thanhcong.php?madh=" . $maDH);
+    header("Location: ../Views/Thanhtoan/thanhcong.php?madh=" . $maDH);
     exit();
 }

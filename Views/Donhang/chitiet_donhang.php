@@ -1,10 +1,10 @@
 <?php
 session_start();
-require_once '../classes/DB.class.php';
+require_once '../../classes/DB.class.php';
 
 // Kiểm tra đăng nhập
 if (!isset($_SESSION['user_id'])) {
-    header("Location: Taikhoan/login.php");
+    header("Location: ../Taikhoan/login.php");
     exit();
 }
 
@@ -29,7 +29,7 @@ $sqlCT = "SELECT ct.*, sp.TenSP, sp.HinhAnh
           WHERE ct.MaDH = ?";
 $listSP = $db->query($sqlCT, [$maDH])->fetchAll();
 
-include_once 'includes/header.php';
+include_once '../includes/header.php';
 ?>
 
 <div class="container" style="margin-top: 30px; margin-bottom: 50px;">
@@ -62,7 +62,7 @@ include_once 'includes/header.php';
             <?php foreach ($listSP as $sp): ?>
                 <tr style="border-bottom: 1px solid #eee;">
                     <td style="padding: 15px; display: flex; align-items: center; gap: 15px;">
-                        <img src="../assets/images/Sanpham/<?php echo $sp['HinhAnh']; ?>" width="60" style="border: 1px solid #eee; border-radius: 5px;">
+                        <img src="../../assets/images/Sanpham/<?php echo $sp['HinhAnh']; ?>" width="60" style="border: 1px solid #eee; border-radius: 5px;">
                         <span><?php echo $sp['TenSP']; ?></span>
                     </td>
                     <td style="padding: 15px;"><?php echo number_format($sp['DonGia'], 0, ',', '.'); ?>đ</td>
@@ -76,4 +76,4 @@ include_once 'includes/header.php';
     </table>
 </div>
 
-<?php include_once 'includes/footer.php'; ?>
+<?php include_once '../includes/footer.php'; ?>

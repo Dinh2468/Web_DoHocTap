@@ -181,7 +181,7 @@ include_once 'includes/header.php';
                     </button>
 
                     <?php if (isset($_SESSION['user_id'])): ?>
-                        <a href="thanhtoan.php" class="btn-checkout">TIẾN HÀNH THANH TOÁN</a>
+                        <a href="Thanhtoan/thanhtoan.php" class="btn-checkout">TIẾN HÀNH THANH TOÁN</a>
                     <?php else: ?>
                         <a href="Taikhoan/login.php?redirect=giohang" class="btn-checkout" style="background: #f57c00;">
                             ĐĂNG NHẬP ĐỂ THANH TOÁN

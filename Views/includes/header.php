@@ -658,7 +658,7 @@
                             Chào, <?php echo htmlspecialchars($_SESSION['user_name']); ?> <span style="font-size: 10px; margin-left: 5px;"></span>
                         </div>
                         <div id="myDropdown" class="dropdown-content">
-                            <a href="/Web_DoHocTap/Views/lichsu_donhang.php">📦 Đơn hàng của tôi</a>
+                            <a href="/Web_DoHocTap/Views/Donhang/lichsu_donhang.php">📦 Đơn hàng của tôi</a>
                             <a href="/Web_DoHocTap/Views/Taikhoan/settings.php">⚙️ Cài đặt tài khoản</a>
                             <a href="/Web_DoHocTap/Views/Taikhoan/logout.php" style="color: #d32f2f;">Logout</a>
                         </div>

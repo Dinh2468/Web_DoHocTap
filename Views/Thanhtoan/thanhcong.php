@@ -1,13 +1,13 @@
 <?php
 // Views/thanhcong.php
 session_start();
-require_once '../classes/DB.class.php';
+require_once '../../classes/DB.class.php';
 $db = new Db();
 
 $maDH = isset($_GET['madh']) ? $_GET['madh'] : null;
 
 if (!$maDH) {
-    header("Location: ../index.php");
+    header("Location: ../../index.php");
     exit();
 }
 
@@ -18,7 +18,7 @@ $sqlCT = "SELECT ct.*, s.TenSP, s.HinhAnh
           JOIN sanpham s ON ct.MaSP = s.MaSP 
           WHERE ct.MaDH = ?";
 $ds_sanpham_mua = $db->query($sqlCT, [$maDH])->fetchAll();
-include_once 'includes/header.php';
+include_once '../includes/header.php';
 ?>
 
 <div class="container" style="margin: 50px auto; max-width: 800px; text-align: center;">
@@ -57,9 +57,9 @@ include_once 'includes/header.php';
         </div>
 
         <div style="display: flex; justify-content: center;">
-            <a href="../index.php" style="background: #4CAF50; text-decoration: none; color: white; padding: 12px 40px; border-radius: 5px; font-weight: bold;">TIẾP TỤC MUA SẮM</a>
+            <a href="/Web_DoHocTap/index.php" style="background: #4CAF50; text-decoration: none; color: white; padding: 12px 40px; border-radius: 5px; font-weight: bold;">TIẾP TỤC MUA SẮM</a>
         </div>
     </div>
 </div>
 
-<?php include_once 'includes/footer.php'; ?>
+<?php include_once '../includes/footer.php'; ?>
