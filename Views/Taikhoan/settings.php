@@ -55,7 +55,7 @@ include_once '../includes/header.php';
             <div style="margin-bottom: 20px;">
                 <label style="display: block; color: #666; font-weight: 500; margin-bottom: 5px;">Số điện thoại:</label>
                 <p id="view_sdt" style="font-size: 16px; color: #333; margin: 0;"><?php echo htmlspecialchars($user['SDT'] ?? 'Chưa cập nhật'); ?></p>
-                <input type="text" name="sdt" id="edit_sdt" value="<?php echo htmlspecialchars($user['SDT']); ?>"
+                <input type="text" name="sdt" id="edit_sdt" value="<?php echo htmlspecialchars($user['SDT'] ?? ''); ?>"
                     style="display: none; width: 100%; padding: 10px; border: 1px solid #4caf50; border-radius: 5px;">
             </div>
 
@@ -68,7 +68,7 @@ include_once '../includes/header.php';
                 <label style="display: block; color: #666; font-weight: 500; margin-bottom: 5px;">Địa chỉ giao hàng:</label>
                 <p id="view_diaChi" style="font-size: 16px; color: #333; margin: 0;"><?php echo htmlspecialchars($user['DiaChi'] ?? 'Chưa cập nhật'); ?></p>
                 <textarea name="diaChi" id="edit_diaChi" rows="3"
-                    style="display: none; width: 100%; padding: 10px; border: 1px solid #4caf50; border-radius: 5px;"><?php echo htmlspecialchars($user['DiaChi']); ?></textarea>
+                    style="display: none; width: 100%; padding: 10px; border: 1px solid #4caf50; border-radius: 5px;"><?php echo htmlspecialchars($user['DiaChi'] ?? ''); ?></textarea>
             </div>
 
             <div style="display: flex; gap: 10px;">

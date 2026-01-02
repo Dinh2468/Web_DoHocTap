@@ -28,6 +28,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $_SESSION['user_id'] = $user['MaKH'];
         $_SESSION['user_name'] = !empty($user['HoTen']) ? $user['HoTen'] : $user['TenDangNhap'];
 
+        $_SESSION['user_role'] = $user['VaiTro'];
+
         if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
             $ghModel = new Giohang();
             $ctghModel = new Chitiet_Giohang();
@@ -51,12 +53,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
             unset($_SESSION['cart']);
         }
-        if (isset($_GET['redirect']) && $_GET['redirect'] == 'giohang') {
+        if ($user['VaiTro'] == 'Quản trị viên' || $user['VaiTro'] == 'Nhân viên') {
 
-            header("Location: ../giohang.php");
+            header("Location: ../../admin/index.php");
         } else {
 
-            header("Location: ../../index.php");
+            if (isset($_GET['redirect']) && $_GET['redirect'] == 'giohang') {
+                header("Location: ../giohang.php");
+            } else {
+                header("Location: ../../index.php");
+            }
         }
         exit();
     } else {
@@ -133,6 +139,59 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             margin-bottom: 15px;
             text-align: left;
         }
+
+        /* Nút Đăng nhập Google */
+        .btn-google {
+            width: 100%;
+            padding: 10px;
+            background-color: #ffffff;
+            color: #757575;
+            border: 1px solid #ddd;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+            transition: background 0.3s;
+        }
+
+        .btn-google:hover {
+            background-color: #f5f5f5;
+        }
+
+        /* Dòng đăng ký */
+        .register-link {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .register-link a {
+            color: #4CAF50;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .divider {
+            margin: 20px 0;
+            display: flex;
+            align-items: center;
+            color: #bbb;
+            font-size: 12px;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: #eee;
+            margin: 0 10px;
+        }
     </style>
 </head>
 
@@ -142,13 +201,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <?php if ($error): ?>
             <div class="error-msg"><?php echo $error; ?></div>
         <?php endif; ?>
+
         <form method="POST" action="">
             <label>Tên tài khoản</label>
-            <input type="text" name="username" required>
+            <input type="text" name="username" placeholder="Nhập tên tài khoản..." required>
             <label>Mật khẩu</label>
-            <input type="password" name="password" required>
+            <input type="password" name="password" placeholder="Nhập mật khẩu..." required>
             <button type="submit" class="btn-login">Đăng nhập</button>
         </form>
+
+        <div class="divider">HOẶC</div>
+
+        <button type="button" class="btn-google" onclick="alert('Tính năng Đăng nhập Google đang được phát triển!')">
+            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18">
+            Tiếp tục với Google
+        </button>
+
+        <div class="register-link">
+            Bạn chưa có tài khoản? <a href="dangky.php">Đăng ký ngay</a>
+        </div>
     </div>
 </body>
 
