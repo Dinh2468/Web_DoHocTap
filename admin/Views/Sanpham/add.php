@@ -15,15 +15,18 @@ $thuongHieu = $db->query("SELECT * FROM thuonghieu")->fetchAll();
     <div class="table-container">
         <form action="../../Controller/AdminSanphamController.php?action=add" method="POST" enctype="multipart/form-data">
             <div class="form-row">
-                <div class="form-group" style="flex: 2;">
+                <div class="form-group">
                     <label class="form-label">Tên sản phẩm</label>
-                    <input type="text" name="tenSP" class="form-control" required>
+                    <input type="text" name="tenSP" class="form-control" placeholder="Nhập tên sản phẩm..." required>
                 </div>
-                <div class="form-group" style="flex: 1;">
+                <div class="form-group">
                     <label class="form-label">Danh mục</label>
-                    <select name="maLoai" class="form-control">
-                        <?php foreach ($loaiSP as $l): ?>
-                            <option value="<?php echo $l['MaLoai']; ?>"><?php echo $l['TenLoai']; ?></option>
+                    <select name="maLoai" class="form-control" required>
+                        <option value="">-- Chọn danh mục --</option>
+                        <?php foreach ($loaiSP as $loai): ?>
+                            <option value="<?php echo $loai['MaLoai']; ?>">
+                                <?php echo htmlspecialchars($loai['TenLoai']); ?>
+                            </option>
                         <?php endforeach; ?>
                     </select>
                 </div>
@@ -32,45 +35,26 @@ $thuongHieu = $db->query("SELECT * FROM thuonghieu")->fetchAll();
             <div class="form-row">
                 <div class="form-group">
                     <label class="form-label">Giá bán (VNĐ)</label>
-                    <input type="number" name="gia" class="form-control" required>
+                    <input type="number" name="gia" class="form-control" placeholder="0" required min="0" step="1000">
                 </div>
                 <div class="form-group">
                     <label class="form-label">Số lượng nhập</label>
-                    <input type="number" name="soLuong" class="form-control" value="0">
+                    <input type="number" name="soLuong" class="form-control" value="0" required min="0">
                 </div>
             </div>
 
-            <div class="form-row">
-                <div class="form-group">
-                    <label class="form-label">Thương hiệu</label>
-                    <select name="maTH" class="form-control">
-                        <?php foreach ($thuongHieu as $t): ?>
-                            <option value="<?php echo $t['MaTH']; ?>"><?php echo $t['TenTH']; ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Nhà cung cấp</label>
-                    <select name="maNCC" class="form-control">
-                        <?php foreach ($nhaCC as $n): ?>
-                            <option value="<?php echo $n['MaNCC']; ?>"><?php echo $n['TenNCC']; ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label class="form-label">Hình ảnh</label>
-                <input type="file" name="hinhAnh" class="form-control" accept="image/*" required>
+            <div class="form-group" style="margin-bottom: 20px;">
+                <label class="form-label">Hình ảnh sản phẩm</label>
+                <input type="file" name="hinhAnh" class="form-control">
             </div>
 
             <div class="form-group">
                 <label class="form-label">Mô tả sản phẩm</label>
-                <textarea name="moTa" class="form-control" rows="4"></textarea>
+                <textarea name="moTa" class="form-control" rows="4" placeholder="Viết mô tả chi tiết..."></textarea>
             </div>
 
-            <div style="text-align: right; margin-top: 20px;">
-                <button type="submit" class="btn-save" style="padding: 12px 30px;">LƯU SẢN PHẨM</button>
+            <div style="text-align: right; margin-top: 30px;">
+                <button type="submit" class="btn-save">LƯU SẢN PHẨM</button>
             </div>
         </form>
     </div>

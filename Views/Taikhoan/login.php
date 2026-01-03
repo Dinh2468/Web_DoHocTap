@@ -24,47 +24,50 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $user = $stmt->fetch();
 
     if ($user) {
+        if (isset($user['TrangThai']) && $user['TrangThai'] == 0) {
+            $error = "Tài khoản của bạn đã bị khóa.";
+        } else {
+            $_SESSION['user_id'] = $user['MaKH'];
+            $_SESSION['user_name'] = !empty($user['HoTen']) ? $user['HoTen'] : $user['TenDangNhap'];
 
-        $_SESSION['user_id'] = $user['MaKH'];
-        $_SESSION['user_name'] = !empty($user['HoTen']) ? $user['HoTen'] : $user['TenDangNhap'];
+            $_SESSION['user_role'] = $user['VaiTro'];
 
-        $_SESSION['user_role'] = $user['VaiTro'];
+            if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
+                $ghModel = new Giohang();
+                $ctghModel = new Chitiet_Giohang();
+                $spModel = new Sanpham();
+                $gioHang = $ghModel->lay_theo_khach_hang($user['MaKH']);
+                if (!$gioHang) {
+                    $maGH = $ghModel->tao_moi($user['MaKH']);
+                } else {
+                    $maGH = $gioHang['MaGH'];
+                }
 
-        if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
-            $ghModel = new Giohang();
-            $ctghModel = new Chitiet_Giohang();
-            $spModel = new Sanpham();
-            $gioHang = $ghModel->lay_theo_khach_hang($user['MaKH']);
-            if (!$gioHang) {
-                $maGH = $ghModel->tao_moi($user['MaKH']);
-            } else {
-                $maGH = $gioHang['MaGH'];
+                foreach ($_SESSION['cart'] as $maSP => $sl) {
+                    $sp = $spModel->getById($maSP);
+                    if ($sp) {
+                        $ctghModel->them_san_pham($maGH, $maSP, $sl, $sp['Gia']);
+                    }
+                }
+                // Tính lại tổng tiền 
+                if (method_exists($ghModel, 'tinh_lai_tong_tien')) {
+                    $ghModel->tinh_lai_tong_tien($maGH);
+                }
+                unset($_SESSION['cart']);
             }
+            if ($user['VaiTro'] == 'Quản trị viên' || $user['VaiTro'] == 'Nhân viên') {
 
-            foreach ($_SESSION['cart'] as $maSP => $sl) {
-                $sp = $spModel->getById($maSP);
-                if ($sp) {
-                    $ctghModel->them_san_pham($maGH, $maSP, $sl, $sp['Gia']);
+                header("Location: ../../admin/index.php");
+            } else {
+
+                if (isset($_GET['redirect']) && $_GET['redirect'] == 'giohang') {
+                    header("Location: ../giohang.php");
+                } else {
+                    header("Location: ../../index.php");
                 }
             }
-            // Tính lại tổng tiền 
-            if (method_exists($ghModel, 'tinh_lai_tong_tien')) {
-                $ghModel->tinh_lai_tong_tien($maGH);
-            }
-            unset($_SESSION['cart']);
+            exit();
         }
-        if ($user['VaiTro'] == 'Quản trị viên' || $user['VaiTro'] == 'Nhân viên') {
-
-            header("Location: ../../admin/index.php");
-        } else {
-
-            if (isset($_GET['redirect']) && $_GET['redirect'] == 'giohang') {
-                header("Location: ../giohang.php");
-            } else {
-                header("Location: ../../index.php");
-            }
-        }
-        exit();
     } else {
         $error = "Tên đăng nhập hoặc mật khẩu không đúng!";
     }
