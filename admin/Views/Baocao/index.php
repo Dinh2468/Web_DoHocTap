@@ -1,6 +1,10 @@
 <?php
 // admin/Views/Baocao/index.php
 include_once '../../includes/header.php';
+if ($_SESSION['user_role'] !== 'Quản trị viên') {
+    echo "<script>alert('Bạn không có quyền truy cập trang này!'); window.location.href='/Web_DoHocTap/admin/index.php';</script>";
+    exit();
+}
 $db = new Db();
 
 // Lấy tham số từ URL

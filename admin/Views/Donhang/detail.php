@@ -85,7 +85,7 @@ $items = $db->query("SELECT ctdh.*, sp.TenSP, sp.HinhAnh
                         <td style="text-align: center;"><?php echo $item['SoLuong']; ?></td>
                         <td style="text-align: right;">
                             <?php
-                            $gia = $item['Gia'] ?? $item['Gia'] ?? 0;
+                            $gia = $item['DonGia'] ?? 0;
                             echo number_format((float)$gia, 0, ',', '.');
                             ?>đ
                         </td>

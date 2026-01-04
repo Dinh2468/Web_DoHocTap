@@ -203,11 +203,19 @@ if (
         .btn-edit {
             background: #E3F2FD;
             color: #1976D2;
+            border: none !important;
+            outline: none !important;
+            cursor: pointer;
+            padding: 5px 15px;
+            border-radius: 4px;
+            transition: 0.3s;
         }
 
         .btn-delete {
             background: #FFEBEE;
             color: #C62828;
+            border: none !important;
+            text-decoration: none;
         }
 
         .form-container {
@@ -591,16 +599,45 @@ if (
                     Khách hàng
                 </a>
             </li>
-            <li><a href="/Web_DoHocTap/admin/Views/Nhanvien/index.php"
-                    class="<?php echo (strpos($current_page, 'Views/Nhanvien') !== false) ? 'active' : ''; ?>">
-                    Nhân viên
-                </a>
-            </li>
-            <li><a href="/Web_DoHocTap/admin/Views/Baocao/index.php"
-                    class="<?php echo (strpos($current_page, 'Views/Baocao') !== false) ? 'active' : ''; ?>">
-                    Báo cáo thống kê
-                </a>
-            </li>
+
+            <?php if ($_SESSION['user_role'] === 'Quản trị viên'): ?>
+                <li>
+                    <a href="/Web_DoHocTap/admin/Views/Danhmuc/index.php"
+                        class="<?php echo (strpos($current_page, 'Views/Danhmuc') !== false) ? 'active' : ''; ?>">
+                        Quản lý danh mục
+                    </a>
+                </li>
+                <li>
+                    <a href="/Web_DoHocTap/admin/Views/Thuonghieu/index.php"
+                        class="<?php echo (strpos($current_page, 'Views/Thuonghieu') !== false) ? 'active' : ''; ?>">
+                        Quản lý thương hiệu
+                    </a>
+                </li>
+                <li>
+                    <a href="/Web_DoHocTap/admin/Views/Danhgia/index.php"
+                        class="<?php echo (strpos($current_page, 'Views/Danhgia') !== false) ? 'active' : ''; ?>">
+                        Quản lý đánh giá
+                    </a>
+                </li>
+                <li>
+                    <a href="/Web_DoHocTap/admin/Views/Khuyenmai/index.php"
+                        class="<?php echo (strpos($current_page, 'Views/Khuyenmai') !== false) ? 'active' : ''; ?>">
+                        Quản lý khuyến mãi
+                    </a>
+                </li>
+                <li>
+                    <a href="/Web_DoHocTap/admin/Views/Nhanvien/index.php"
+                        class="<?php echo (strpos($current_page, 'Views/Nhanvien') !== false) ? 'active' : ''; ?>">
+                        Nhân viên
+                    </a>
+                </li>
+                <li>
+                    <a href="/Web_DoHocTap/admin/Views/Baocao/index.php"
+                        class="<?php echo (strpos($current_page, 'Views/Baocao') !== false) ? 'active' : ''; ?>">
+                        Báo cáo thống kê
+                    </a>
+                </li>
+            <?php endif; ?>
         </ul>
     </aside>
     <main class="main-content">
