@@ -354,39 +354,40 @@ if (
 
             /* Ẩn tất cả các thành phần không cần thiết khi in */
             .btn-print,
-            .btn-save,
             .sidebar,
             .main-header,
             .btn-save,
+            .btn-filter,
             .btn-clear,
             form label,
             select,
             form button,
-            .main-content-inner>header a {
+            .main-content-inner>header a,
+            .toolbar,
+            hr {
                 display: none !important;
             }
 
-            /* Điều chỉnh lại layout chính để chiếm toàn bộ trang in */
+            /* Mở rộng nội dung chính ra toàn trang */
             .main-content {
                 margin-left: 0 !important;
                 padding: 0 !important;
+                width: 100% !important;
             }
 
-            .main-content-inner {
-                background: white !important;
-                padding: 0 !important;
-            }
-
-            /* Hiển thị rõ các khung thông tin */
-            .table-container {
-                box-shadow: none !important;
-                border: 1px solid #eee !important;
+            /* Hiển thị các thẻ thống kê theo hàng ngang hoặc dọc tùy độ rộng */
+            .stats-grid {
+                display: flex !important;
+                gap: 10px !important;
                 margin-bottom: 20px !important;
             }
 
-            .stats-grid {
-                display: block !important;
-                /* Xếp chồng thông tin khách và đơn hàng để dễ đọc hơn khi in */
+            .stat-card {
+                flex: 1;
+                border: 1px solid #ddd !important;
+                /* Thêm viền để rõ ràng khi in trắng đen */
+                box-shadow: none !important;
+                margin-bottom: 20px !important;
             }
 
             h2,
@@ -394,7 +395,13 @@ if (
                 color: black !important;
             }
 
-            /* Đảm bảo bảng in rõ nét */
+            /* Đảm bảo biểu đồ hiển thị đúng kích thước */
+            canvas {
+                max-width: 100% !important;
+                height: auto !important;
+            }
+
+            /* Bảng chi tiết phải hiện rõ nét */
             table {
                 width: 100% !important;
                 border-collapse: collapse !important;
@@ -402,7 +409,9 @@ if (
 
             th,
             td {
-                border-bottom: 1px solid #ddd !important;
+
+                border: 1px solid #eee !important;
+                padding: 8px !important;
             }
         }
 
@@ -579,7 +588,13 @@ if (
             <li><a href="/Web_DoHocTap/admin/Views/Nhanvien/index.php"
                     class="<?php echo (strpos($current_page, 'Views/Nhanvien') !== false) ? 'active' : ''; ?>">
                     Nhân viên
-                </a></li>
+                </a>
+            </li>
+            <li><a href="/Web_DoHocTap/admin/Views/Baocao/index.php"
+                    class="<?php echo (strpos($current_page, 'Views/Baocao') !== false) ? 'active' : ''; ?>">
+                    Báo cáo thống kê
+                </a>
+            </li>
         </ul>
     </aside>
     <main class="main-content">
