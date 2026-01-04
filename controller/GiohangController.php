@@ -15,14 +15,17 @@ if (isset($_POST['maSP'])) {
     $sl = isset($_POST['sl']) ? (int)$_POST['sl'] : 1;
     $isAjax = isset($_POST['ajax']) ? true : false;
 
-    // Kiểm tra nếu ĐÃ đăng nhập
     if (isset($_SESSION['user_id'])) {
         $maKH = $_SESSION['user_id'];
-        // Logic cũ: Lưu vào Database
+
         $ghModel = new Giohang();
         $gioHang = $ghModel->lay_theo_khach_hang($maKH) ?: $ghModel->tao_moi($maKH);
         $maGH = $gioHang['MaGH'] ?? $gioHang;
+
         $sp = $spModel->getById($maSP);
+        if ($sl > $sp['SoLuongTon']) {
+            $sl = $sp['SoLuongTon'];
+        }
         $ctghModel->them_san_pham($maGH, $maSP, $sl, $sp['Gia']);
         $ghModel->tinh_lai_tong_tien($maGH);
     } else {
@@ -64,29 +67,31 @@ if (isset($_GET['action']) && $_GET['action'] == 'xoa') {
     header("Location: ../Views/giohang.php");
     exit();
 }
-// Xử lý CẬP NHẬT số lượng
+
 if (isset($_POST['action']) && $_POST['action'] == 'update') {
+    // THÊM DÒNG NÀY ĐỂ KHỞI TẠO ĐỐI TƯỢNG
+    $ghModel = new Giohang();
+
     if (isset($_POST['sl']) && is_array($_POST['sl'])) {
-        if (isset($_SESSION['user_id'])) {
-            // Cập nhật Database cho thành viên
-            $maKH = $_SESSION['user_id'];
-            $ghModel = new Giohang();
-            $gioHang = $ghModel->lay_theo_khach_hang($maKH);
-            if ($gioHang) {
-                foreach ($_POST['sl'] as $maSP => $slMoi) {
-                    $slMoi = (int)$slMoi;
-                    if ($slMoi > 0) {
-                        $ctghModel->cap_nhat_so_luong($gioHang['MaGH'], $maSP, $slMoi);
-                    } else {
-                        $ctghModel->xoa_san_pham($gioHang['MaGH'], $maSP);
-                    }
-                }
-                $ghModel->tinh_lai_tong_tien($gioHang['MaGH']);
+        foreach ($_POST['sl'] as $maSP => $slMoi) {
+            $slMoi = (int)$slMoi;
+            $sp = $spModel->getById($maSP);
+
+            if ($slMoi > $sp['SoLuongTon']) {
+                $slMoi = $sp['SoLuongTon'];
             }
-        } else {
-            // Cập nhật SESSION cho khách vãng lai
-            foreach ($_POST['sl'] as $maSP => $slMoi) {
-                $slMoi = (int)$slMoi;
+
+            if (isset($_SESSION['user_id'])) {
+                $maKH = $_SESSION['user_id'];
+                // Bây giờ $ghModel đã tồn tại và có thể gọi hàm này
+                $gioHang = $ghModel->lay_theo_khach_hang($maKH);
+                if ($slMoi > 0) {
+                    $ctghModel->cap_nhat_so_luong($gioHang['MaGH'], $maSP, $slMoi);
+                } else {
+                    $ctghModel->xoa_san_pham($gioHang['MaGH'], $maSP);
+                }
+            } else {
+                // Xử lý cho khách vãng lai (Session)
                 if ($slMoi > 0) {
                     $_SESSION['cart'][$maSP] = $slMoi;
                 } else {
@@ -94,7 +99,9 @@ if (isset($_POST['action']) && $_POST['action'] == 'update') {
                 }
             }
         }
+        // Tính lại tổng tiền sau khi cập nhật
+        if (isset($_SESSION['user_id'])) $ghModel->tinh_lai_tong_tien($gioHang['MaGH']);
     }
-    header("Location: ../Views/giohang.php");
+    header("Location: ../Views/giohang.php?msg=updated");
     exit();
 }

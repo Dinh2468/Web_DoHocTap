@@ -38,6 +38,15 @@ if (isset($_SESSION['user_id'])) {
         }
     }
 }
+// Tìm dòng 35 (sau khi đã có $ds_sanpham) và chèn đoạn này:
+$canCheckout = true;
+foreach ($ds_sanpham as $item) {
+    // Nếu có bất kỳ sản phẩm nào vượt quá tồn kho, khóa nút thanh toán
+    if (isset($item['SoLuongTon']) && $item['SoLuong'] > $item['SoLuongTon']) {
+        $canCheckout = false;
+        break;
+    }
+}
 include_once 'includes/header.php';
 ?>
 
@@ -127,14 +136,30 @@ include_once 'includes/header.php';
         font-weight: bold;
         display: inline-block;
     }
+
+    .qty-btn {
+        padding: 5px 10px;
+        background: #eee;
+        border: 1px solid #ddd;
+        cursor: pointer;
+    }
 </style>
 
 <div class="container cart-container">
     <h2 class="section-title">Giỏ hàng của bạn</h2>
-
+    <?php if (isset($_GET['error']) && $_GET['error'] == 'out_of_stock'): ?>
+        <div style="background: #FFEBEE; color: #C62828; padding: 20px; border: 2px solid #ef9a9a; border-radius: 8px; margin-bottom: 25px; font-weight: bold; display: flex; align-items: center; gap: 10px;">
+            <span style="font-size: 24px;">⚠️</span>
+            <div>
+                Rất tiếc! Một số sản phẩm trong giỏ hàng đã hết hoặc không đủ số lượng thực tế trong kho.
+                <br>Chúng tôi đã tự động điều chỉnh về mức tối đa hiện có. Vui lòng kiểm tra lại giỏ hàng trước khi thanh toán lại!
+            </div>
+        </div>
+    <?php endif; ?>
     <?php if (!empty($ds_sanpham)): ?>
         <form action="../controller/GiohangController.php" method="POST">
             <input type="hidden" name="action" value="update">
+
             <table class="cart-table">
                 <thead>
                     <tr>
@@ -147,20 +172,41 @@ include_once 'includes/header.php';
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach ($ds_sanpham as $item): ?>
-                        <tr>
-                            <td><strong><?php echo $item['TenSP']; ?></strong></td>
+                    <?php foreach ($ds_sanpham as $item):
+                        // Kiểm tra xem sản phẩm này có vượt quá tồn kho không
+                        $isOverstock = (isset($item['SoLuongTon']) && $item['SoLuong'] > $item['SoLuongTon']);
+                    ?>
+                        <tr style="<?php echo $isOverstock ? 'background-color: #FFF9F9; border-left: 4px solid #d32f2f;' : ''; ?>">
+                            <td>
+                                <strong><?php echo $item['TenSP']; ?></strong>
+                                <?php if ($isOverstock): ?>
+                                    <div style="color: #d32f2f; font-size: 12px; font-weight: bold; margin-top: 5px;">
+                                        ⚠️ Số lượng yêu cầu vượt quá kho!
+                                    </div>
+                                <?php endif; ?>
+                            </td>
                             <td><img src="/Web_DoHocTap/assets/images/Sanpham/<?php echo $item['HinhAnh']; ?>" class="cart-img"></td>
                             <td><?php echo number_format($item['DonGia'], 0, ',', '.'); ?>đ</td>
-
                             <td>
-                                <input type="number"
-                                    name="sl[<?php echo $item['MaSP']; ?>]"
-                                    value="<?php echo $item['SoLuong']; ?>"
-                                    min="1"
-                                    class="quantity-input">
-                            </td>
+                                <div style="display: flex; flex-direction: column; align-items: center; gap: 5px;">
+                                    <div style="display: flex; justify-content: center; align-items: center; gap: 5px;">
+                                        <button type="button" class="qty-btn" onclick="this.parentNode.querySelector('input').stepDown()">-</button>
 
+                                        <input type="number"
+                                            name="sl[<?php echo $item['MaSP']; ?>]"
+                                            value="<?php echo $item['SoLuong']; ?>"
+                                            min="1"
+                                            max="<?php echo $item['SoLuongTon']; ?>"
+                                            class="quantity-input"
+                                            style="width: 50px; <?php echo $isOverstock ? 'border-color: #d32f2f; background: #FFF0F0;' : ''; ?>">
+
+                                        <button type="button" class="qty-btn" onclick="this.parentNode.querySelector('input').stepUp()">+</button>
+                                    </div>
+                                    <small style="color: <?php echo $isOverstock ? '#d32f2f' : '#666'; ?>; font-size: 11px; font-weight: <?php echo $isOverstock ? 'bold' : 'normal'; ?>;">
+                                        (Kho còn: <?php echo $item['SoLuongTon']; ?>)
+                                    </small>
+                                </div>
+                            </td>
                             <td><strong><?php echo number_format($item['DonGia'] * $item['SoLuong'], 0, ',', '.'); ?>đ</strong></td>
                             <td>
                                 <a href="../controller/GiohangController.php?action=xoa&idsp=<?php echo $item['MaSP']; ?>" class="btn-xoa" onclick="return confirm('Bạn muốn bỏ sản phẩm này?')">Xóa</a>
@@ -181,7 +227,13 @@ include_once 'includes/header.php';
                     </button>
 
                     <?php if (isset($_SESSION['user_id'])): ?>
-                        <a href="Thanhtoan/thanhtoan.php" class="btn-checkout">TIẾN HÀNH THANH TOÁN</a>
+                        <?php if ($canCheckout): ?>
+                            <a href="Thanhtoan/thanhtoan.php" class="btn-checkout">TIẾN HÀNH THANH TOÁN</a>
+                        <?php else: ?>
+                            <button type="button" class="btn-checkout" style="background: #ccc; cursor: not-allowed;" onclick="alert('Vui lòng cập nhật lại số lượng khớp với tồn kho trước khi thanh toán!')">
+                                TIẾN HÀNH THANH TOÁN
+                            </button>
+                        <?php endif; ?>
                     <?php else: ?>
                         <a href="Taikhoan/login.php?redirect=giohang" class="btn-checkout" style="background: #f57c00;">
                             ĐĂNG NHẬP ĐỂ THANH TOÁN
@@ -197,5 +249,30 @@ include_once 'includes/header.php';
         </div>
     <?php endif; ?>
 </div>
+<script>
+    document.querySelectorAll('.quantity-input').forEach(input => {
+        input.addEventListener('input', function() {
+            const max = parseInt(this.getAttribute('max'));
+            const val = parseInt(this.value);
+            const parentRow = this.closest('tr');
+            const stockInfo = parentRow.querySelector('small');
 
+            if (val > max) {
+                // Đổi sang màu cảnh báo lỗi
+                this.style.borderColor = '#d32f2f';
+                this.style.backgroundColor = '#FFF0F0';
+                parentRow.style.backgroundColor = '#FFF9F9';
+                stockInfo.style.color = '#d32f2f';
+                stockInfo.style.fontWeight = 'bold';
+            } else {
+                // Trả về màu bình thường
+                this.style.borderColor = '#ddd';
+                this.style.backgroundColor = '#fff';
+                parentRow.style.backgroundColor = 'transparent';
+                stockInfo.style.color = '#666';
+                stockInfo.style.fontWeight = 'normal';
+            }
+        });
+    });
+</script>
 <?php include_once 'includes/footer.php'; ?>

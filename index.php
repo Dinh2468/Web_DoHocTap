@@ -77,7 +77,7 @@ include_once 'Views/includes/header.php';
     </div>
 </div>
 
-<div class="container section-wrapper">
+<!-- <div class="container section-wrapper">
     <div class="section-header">
         <h3 class="title-left" style="color: #e65100;">SẢN PHẨM KHUYẾN MÃI</h3>
         <a href="Views/Sanpham/sanpham.php" class="view-more-link">Xem thêm các sản phẩm khác »</a>
@@ -87,24 +87,23 @@ include_once 'Views/includes/header.php';
         <div id="sliderGiaTot" class="product-slider">
             <?php foreach ($ds_sanpham as $sp): ?>
                 <div class="slider-item">
-                    <div class="discount-badge">-20%</div>
+
                     <?php include 'Views/Sanpham/the_sanpham.php'; ?>
                 </div>
             <?php endforeach; ?>
         </div>
         <button class="nav-arrow next" onclick="moveSlider('sliderGiaTot', 1)">❯</button>
     </div>
-</div>
+</div> -->
 <script>
     function moveSlider(sliderId, direction) {
         const slider = document.getElementById(sliderId);
-        const scrollAmount = slider.offsetWidth; // Cuộn đúng một khung hình (4 sản phẩm)
+        const scrollAmount = slider.offsetWidth;
         slider.scrollLeft += direction * scrollAmount;
     }
 
-    // Hàm tạo thông báo nổi ở góc màn hình
     function showToast(message) {
-        // Tạo container nếu chưa có
+
         let container = document.getElementById('toast-container');
         if (!container) {
             container = document.createElement('div');
@@ -112,14 +111,13 @@ include_once 'Views/includes/header.php';
             document.body.appendChild(container);
         }
 
-        // Tạo nội dung thông báo
         const toast = document.createElement('div');
         toast.className = 'toast';
         toast.innerHTML = `✓ ${message}`;
 
         container.appendChild(toast);
 
-        // Tự động xóa thông báo sau 3 giây
+
         setTimeout(() => {
             toast.style.opacity = '0';
             toast.style.transform = 'translateX(100%)';

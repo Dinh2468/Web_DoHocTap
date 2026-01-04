@@ -8,14 +8,22 @@
 
         <div style="color: #FFD700; font-size: 12px; margin-bottom: 5px;">
             <?php
-            // Đảm bảo biến $dgModel đã được khởi tạo ở index.php
             $sao = $dgModel->tinh_sao_trung_binh($sp['MaSP']);
             echo str_repeat('★', floor($sao)) . str_repeat('☆', 5 - floor($sao));
             ?>
         </div>
 
         <div class="product-price">
-            <span class="current-price"><?php echo number_format($sp['Gia'], 0, ',', '.'); ?>đ</span>
+            <?php if (isset($sp['GiaKM']) && $sp['GiaKM'] < $sp['Gia']): ?>
+                <span style="text-decoration: line-through; color: #999; font-size: 13px; margin-right: 5px;">
+                    <?php echo number_format($sp['Gia'], 0, ',', '.'); ?>đ
+                </span>
+                <span class="current-price" style="color: #d32f2f; font-weight: bold;">
+                    <?php echo number_format($sp['GiaKM'], 0, ',', '.'); ?>đ
+                </span>
+            <?php else: ?>
+                <span class="current-price"><?php echo number_format($sp['Gia'], 0, ',', '.'); ?>đ</span>
+            <?php endif; ?>
         </div>
     </a>
     <form action="/Web_DoHocTap/controller/GiohangController.php" method="POST" class="add-to-cart-quick">

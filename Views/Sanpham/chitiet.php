@@ -118,7 +118,24 @@ include_once '../../Views/includes/header.php';
                 (<?php echo $sao_tb; ?>/5)
             </div>
 
-            <div class="price-detail"><?php echo number_format($sp['Gia'], 0, ',', '.'); ?> VNĐ</div>
+            <div class="product-price">
+                <?php
+                // Kiểm tra xem GiaKM có tồn tại và nhỏ hơn giá gốc không
+                $giaKM = isset($sp['GiaKM']) ? $sp['GiaKM'] : $sp['Gia'];
+
+                if ($giaKM < $sp['Gia']): ?>
+                    <span style="text-decoration: line-through; color: #999; font-size: 18px;">
+                        <?php echo number_format($sp['Gia'], 0, ',', '.'); ?>đ
+                    </span>
+                    <span style="color: #d32f2f; font-size: 24px; font-weight: bold; margin-left: 10px;">
+                        <?php echo number_format($giaKM, 0, ',', '.'); ?>đ
+                    </span>
+                <?php else: ?>
+                    <span style="font-size: 24px; font-weight: bold;">
+                        <?php echo number_format($sp['Gia'], 0, ',', '.'); ?>đ
+                    </span>
+                <?php endif; ?>
+            </div>
 
             <div class="description">
                 <strong>Mô tả sản phẩm:</strong><br>

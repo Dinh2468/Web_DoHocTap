@@ -29,6 +29,7 @@ $sqlCT = "SELECT ct.*, sp.TenSP, sp.HinhAnh
           WHERE ct.MaDH = ?";
 $listSP = $db->query($sqlCT, [$maDH])->fetchAll();
 
+
 include_once '../includes/header.php';
 ?>
 
@@ -56,6 +57,9 @@ include_once '../includes/header.php';
                 <th style="padding: 15px;">Đơn giá</th>
                 <th style="padding: 15px; text-align: center;">Số lượng</th>
                 <th style="padding: 15px; text-align: right;">Thành tiền</th>
+                <?php if ($donhang['TrangThai'] === 'Hoàn thành'): ?>
+                    <th style="padding: 15px; text-align: center;">Đánh giá</th>
+                <?php endif; ?>
             </tr>
         </thead>
         <tbody>
@@ -69,6 +73,61 @@ include_once '../includes/header.php';
                     <td style="padding: 15px; text-align: center;"><?php echo $sp['SoLuong']; ?></td>
                     <td style="padding: 15px; text-align: right; font-weight: bold;">
                         <?php echo number_format($sp['DonGia'] * $sp['SoLuong'], 0, ',', '.'); ?>đ
+                    </td>
+
+                    <?php
+                    $ngayDat = new DateTime($donhang['NgayDat']); // Lấy ngày đặt từ DB
+                    $ngayHienTai = new DateTime();
+                    $diff = $ngayHienTai->diff($ngayDat);
+                    $soNgay = $diff->days; // Tính số ngày chênh lệch
+                    $conHanDanhGia = ($soNgay <= 30); // Kiểm tra điều kiện 30 ngày
+                    ?>
+
+                    <td style="padding: 15px; text-align: center; min-width: 200px;">
+                        <?php if ($donhang['TrangThai'] === 'Hoàn thành'): ?>
+                            <?php
+                            // 1. Tính toán thời gian còn lại (30 ngày từ ngày đặt hàng)
+                            $ngayDat = new DateTime($donhang['NgayDat']);
+                            $ngayHienTai = new DateTime();
+                            $diff = $ngayHienTai->diff($ngayDat);
+                            $daysPassed = $diff->days;
+                            $daysLeft = 30 - $daysPassed; // Thời hạn 30 ngày
+
+                            if ($daysLeft >= 0): ?>
+                                <?php
+                                // 2. Kiểm tra số lượt đã đánh giá
+                                $sqlCount = "SELECT COUNT(*) FROM danhgia WHERE MaKH = ? AND MaSP = ? AND MaDH = ?";
+                                $daDanhGia = $db->query($sqlCount, [$_SESSION['user_id'], $sp['MaSP'], $maDH])->fetchColumn();
+
+                                $soLuongMua = $sp['SoLuong']; // Số lượng mua thực tế
+                                $luotConLai = $soLuongMua - $daDanhGia;
+
+                                if ($luotConLai > 0): ?>
+                                    <div style="margin-bottom: 8px;">
+                                        <span style="display: block; font-size: 12px; color: #E65100; font-weight: bold;">
+                                            ⏳ Còn <?php echo $daysLeft; ?> ngày để đánh giá
+                                        </span>
+                                        <span style="display: block; font-size: 11px; color: #666;">
+                                            (Bạn còn <?php echo $luotConLai; ?>/<?php echo $soLuongMua; ?> lượt chưa dùng)
+                                        </span>
+                                    </div>
+                                    <a href="../Sanpham/viet_danhgia.php?idsp=<?php echo $sp['MaSP']; ?>&iddh=<?php echo $maDH; ?>"
+                                        class="btn-buy-now" style="font-size: 11px; padding: 6px 12px; background: #FF9800; border-radius: 4px; display: inline-block;">
+                                        VIẾT ĐÁNH GIÁ NGAY
+                                    </a>
+                                <?php else: ?>
+                                    <div style="color: #2E7D32; font-weight: bold; font-size: 13px;">
+                                        <span style="font-size: 18px;">✓</span> Đã đánh giá đủ <?php echo $soLuongMua; ?> lượt
+                                    </div>
+                                <?php endif; ?>
+                            <?php else: ?>
+                                <span style="color: #d32f2f; font-size: 11px; font-style: italic; background: #FFEBEE; padding: 5px; border-radius: 4px;">
+                                    🚫 Đã hết hạn (Quá 30 ngày)
+                                </span>
+                            <?php endif; ?>
+                        <?php else: ?>
+                            <span style="color: #999; font-size: 12px;">Chờ hoàn thành đơn hàng</span>
+                        <?php endif; ?>
                     </td>
                 </tr>
             <?php endforeach; ?>

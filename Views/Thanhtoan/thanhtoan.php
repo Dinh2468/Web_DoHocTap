@@ -13,6 +13,25 @@ $ds_sanpham = [];
 $tongTien = 0;
 $userInfo = null;
 
+$errorCount = 0;
+if (!empty($ds_sanpham)) {
+    foreach ($ds_sanpham as $item) {
+
+        $checkSp = $spModel->query("SELECT SoLuongTon FROM sanpham WHERE MaSP = ?", [$item['MaSP']])->fetch();
+        if ($item['SoLuong'] > $checkSp['SoLuongTon']) {
+            $errorCount++;
+
+            $ctghModel->cap_nhat_so_luong($gioHang['MaGH'], $item['MaSP'], $checkSp['SoLuongTon']);
+        }
+    }
+}
+
+if ($errorCount > 0) {
+    $ghModel->tinh_lai_tong_tien($gioHang['MaGH']);
+    header("Location: ../giohang.php?error=out_of_stock");
+    exit();
+}
+
 if (!isset($_SESSION['user_id'])) {
     header("Location: ../Taikhoan/login.php");
     exit();
@@ -20,7 +39,6 @@ if (!isset($_SESSION['user_id'])) {
 if (isset($_SESSION['user_id'])) {
     $userInfo = $spModel->query("SELECT * FROM khachhang WHERE MaKH = ?", [$_SESSION['user_id']])->fetch();
 }
-// Lấy dữ liệu giỏ hàng tương tự file cũ của bạn
 if (isset($_SESSION['user_id'])) {
     $gioHang = $ghModel->lay_theo_khach_hang($_SESSION['user_id']);
     if ($gioHang) {
@@ -213,12 +231,47 @@ include_once '../includes/header.php';
             </div>
         <?php endforeach; ?>
 
-        <!-- <div style="display: flex; gap: 10px; margin: 25px 0; border-top: 1px solid #e1e1e1; padding-top: 25px;">
-            <input type="text" class="form-control" placeholder="Mã giảm giá" style="flex: 3;">
-            <button style="flex: 1; background: #c8c8c8; color: #fff; border: none; border-radius: 4px; cursor: not-allowed;">Sử dụng</button>
+        <div style="margin: 25px 0; border-top: 1px solid #e1e1e1; padding-top: 25px;">
+            <div class="section-title" style="font-size: 15px; color: #2E7D32; font-weight: bold;">Chọn ưu đãi dành cho bạn</div>
+            <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px;">
+                <?php
+                // Lấy các chương trình khuyến mãi còn hạn
+                $today = date('Y-m-d');
+                $sqlKM = "SELECT * FROM khuyenmai WHERE NgayKetThuc >= ? AND NgayBatDau <= ?";
+                $listKM = $spModel->query($sqlKM, [$today, $today])->fetchAll();
+
+                if ($listKM):
+                    foreach ($listKM as $km):
+                        // Giả sử DieuKienApDung lưu số tiền tối thiểu (ví dụ: 200000)
+                        $minAmount = (int)$km['DieuKienApDung'];
+                        $isEligible = ($tongTien >= $minAmount); // Kiểm tra điều kiện
+                ?>
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; border: 1px dashed <?php echo $isEligible ? '#4CAF50' : '#ccc'; ?>; background: <?php echo $isEligible ? '#f1f8e9' : '#f5f5f5'; ?>; border-radius: 5px; opacity: <?php echo $isEligible ? '1' : '0.6'; ?>;">
+                            <div>
+                                <strong style="color: #2E7D32;"><?php echo $km['TenKM']; ?></strong>
+                                <br><small style="color: #666; font-size: 11px;">Đơn tối thiểu: <?php echo number_format($minAmount, 0, ',', '.'); ?>đ</small>
+                            </div>
+                            <?php if ($isEligible): ?>
+                                <button type="button"
+                                    onclick="applyDiscount('<?php echo $km['TenKM']; ?>', <?php echo $km['PhanTramGiam']; ?>)"
+                                    style="background: #4CAF50; color: white; border: none; padding: 5px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold;">
+                                    Áp dụng
+                                </button>
+                            <?php else: ?>
+                                <span style="color: #d32f2f; font-size: 11px; font-weight: bold;">Chưa đủ điều kiện</span>
+                            <?php endif; ?>
+                        </div>
+                    <?php endforeach; ?>
+
+                    <p style="font-size: 12px; color: #999; font-style: italic;">Hiện không có chương trình khuyến mãi nào.</p>
+                <?php endif; ?>
+            </div>
+
+            <input type="hidden" id="selected_coupon_name" name="tenKM" value="">
+            <input type="hidden" id="final_total_input" name="final_total" value="<?php echo $tongTien; ?>">
         </div>
 
-        <div class="summary-line">
+        <!-- <div class="summary-line">
             <span>Tạm tính</span>
             <span><?php echo number_format($tongTien, 0, ',', '.'); ?>đ</span>
         </div>
@@ -232,5 +285,29 @@ include_once '../includes/header.php';
         </div>
     </div>
 </div>
+<script>
+    let originalTotal = <?php echo $tongTien; ?>;
 
-<?php include_once 'includes/footer.php'; ?>
+    function applyDiscount(tenKM, phanTram) {
+        let discountAmount = originalTotal * (phanTram / 100);
+        let finalTotal = originalTotal - discountAmount;
+
+        const totalDisplay = document.querySelector('.total-price span:last-child');
+        totalDisplay.innerHTML = `
+        <div style="font-size: 13px; color: #d32f2f; font-weight: normal; margin-bottom: 5px;">
+            Giảm giá (${tenKM}): -${new Intl.NumberFormat('vi-VN').format(discountAmount)}đ
+        </div>
+        <div style="font-size: 14px; color: #666; font-weight: normal; text-decoration: line-through;">
+            ${new Intl.NumberFormat('vi-VN').format(originalTotal)}đ
+        </div>
+        <div style="font-size: 24px; color: #2E7D32;">
+            <small style="font-size: 12px; font-weight: normal;">VND</small> 
+            ${new Intl.NumberFormat('vi-VN').format(finalTotal)}đ
+        </div>
+    `;
+
+        document.getElementById('selected_coupon_name').value = tenKM;
+        document.getElementById('final_total_input').value = finalTotal;
+    }
+</script>
+<?php include_once '../includes/footer.php'; ?>

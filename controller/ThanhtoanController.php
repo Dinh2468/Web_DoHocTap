@@ -1,4 +1,5 @@
 <?php
+// controller/ThanhtoanController.php
 session_start();
 require_once '../classes/DB.class.php';
 require_once '../classes/Giohang.class.php';
@@ -15,31 +16,66 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $ghiChu = $_POST['ghiChu'];
     $maKH = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
 
-    // 1. Tính tổng tiền lại một lần nữa cho chắc chắn
-    $tongTien = 0;
-    $items = [];
-    if ($maKH) {
-        $gioHang = $ghModel->lay_theo_khach_hang($maKH);
-        $items = $ctghModel->lay_danh_sach_trong_gio($gioHang['MaGH']);
-        $tongTien = $gioHang['TongTien'];
+    if (!$maKH) {
+        header("Location: ../Views/Taikhoan/login.php");
+        exit();
     }
 
-    // 2. Lưu vào bảng donhang
+    // --- BƯỚC 1: KIỂM TRA TỒN KHO LẦN CUỐI (BẢO MẬT) ---
+    $gioHang = $ghModel->lay_theo_khach_hang($maKH);
+    $itemsCheck = $ctghModel->lay_danh_sach_trong_gio($gioHang['MaGH']);
+    $errorFound = false;
+
+    foreach ($itemsCheck as $item) {
+        $currentSp = $db->query("SELECT SoLuongTon FROM sanpham WHERE MaSP = ?", [$item['MaSP']])->fetch();
+        if ($item['SoLuong'] > $currentSp['SoLuongTon']) {
+            $errorFound = true;
+            $ctghModel->cap_nhat_so_luong($gioHang['MaGH'], $item['MaSP'], $currentSp['SoLuongTon']);
+        }
+    }
+
+    if ($errorFound) {
+        $ghModel->tinh_lai_tong_tien($gioHang['MaGH']);
+        header("Location: ../Views/giohang.php?error=out_of_stock");
+        exit();
+    }
+
+    // --- BƯỚC 2: LẤY DỮ LIỆU ĐÃ LỌC SẠCH ĐỂ LƯU HÓA ĐƠN ---
+    // Nạp lại dữ liệu từ Database sau khi đã ép số lượng ở Bước 1
+    // --- BƯỚC 2: LẤY DỮ LIỆU ĐÃ LỌC SẠCH ---
+    $ghMoi = $ghModel->lay_theo_khach_hang($maKH);
+
+    // Nếu có giá trị final_total từ Form (đã qua giảm giá), ưu tiên dùng nó
+    $tongTienFinal = (isset($_POST['final_total'])) ? (float)$_POST['final_total'] : $ghMoi['TongTien'];
+    $ghiChuKM = (isset($_POST['tenKM'])) ? "Khuyến mãi: " . $_POST['tenKM'] : "";
+    $ghiChuFull = $_POST['ghiChu'] . " " . $ghiChuKM;
+
+    if (isset($_POST['tenKM'])) {
+        $tenKM = $_POST['tenKM'];
+        // Lấy lại thông tin KM từ DB để kiểm tra điều kiện thực tế
+        $checkKM = $db->query("SELECT * FROM khuyenmai WHERE TenKM = ?", [$tenKM])->fetch();
+
+        if ($checkKM && $ghMoi['TongTien'] < (int)$checkKM['DieuKienApDung']) {
+            // Nếu không đủ điều kiện thực tế, reset lại giá tiền gốc để tránh gian lận
+            $tongTienFinal = $ghMoi['TongTien'];
+            $ghiChuFull = $_POST['ghiChu'] . " (Mã KM $tenKM không hợp lệ)";
+        }
+    }
+    // --- BƯỚC 3: LƯU ĐƠN HÀNG ---
     $sqlDH = "INSERT INTO donhang (MaKH, HoTenNguoiNhan, SDTNguoiNhan, DiaChiGiaoHang, GhiChu, NgayDat, TongTien, TrangThai) 
           VALUES (?, ?, ?, ?, ?, NOW(), ?, 'Chờ xử lý')";
-    $db->query($sqlDH, [$maKH, $hoTen, $sdt, $diaChi, $ghiChu, $tongTien]);
+    $db->query($sqlDH, [$maKH, $_POST['hoTen'], $_POST['sdt'], $_POST['diaChi'], $ghiChuFull, $tongTienFinal]);
     $maDH = $db->lastInsertId();
 
-    // 3. Lưu chi tiết đơn hàng (chitietdh)
-    foreach ($items as $item) {
+    // Lưu chi tiết đơn hàng
+    // SỬA TẠI ĐÂY: Dùng đúng biến $itemsFinal
+    foreach ($itemsCheck as $item) { // Thay $itemsFinal thành $itemsCheck
         $sqlCT = "INSERT INTO chitietdh (MaDH, MaSP, SoLuong, DonGia) VALUES (?, ?, ?, ?)";
         $db->query($sqlCT, [$maDH, $item['MaSP'], $item['SoLuong'], $item['DonGia']]);
     }
 
-    // 4. Xóa giỏ hàng sau khi đặt thành công
-    if ($maKH) {
-        $ghModel->xoa_gio_hang($gioHang['MaGH']);
-    }
+    // --- BƯỚC 4: DỌN DẸP ---
+    $ghModel->xoa_gio_hang($ghMoi['MaGH']);
     header("Location: ../Views/Thanhtoan/thanhcong.php?madh=" . $maDH);
     exit();
 }

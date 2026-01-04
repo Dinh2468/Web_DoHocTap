@@ -61,8 +61,24 @@ class Sanpham extends Db
 
     public function getById($id)
     {
-        $sql = "SELECT * FROM sanpham WHERE MaSP = ?";
-        return $this->query($sql, [$id])->fetch();
+        $sql = "SELECT s.*, 
+            (SELECT km.PhanTramGiam FROM sp_km sk 
+             JOIN khuyenmai km ON sk.MaKM = km.MaKM 
+             WHERE sk.MaSP = s.MaSP 
+             AND CURDATE() BETWEEN km.NgayBatDau AND km.NgayKetThuc 
+             LIMIT 1) as PhanTramGiam
+            FROM sanpham s WHERE s.MaSP = ?";
+
+        $item = $this->query($sql, [$id])->fetch();
+
+        if ($item) {
+            // Tự động tính toán GiaKM nếu có phần trăm giảm giá
+            $item['GiaKM'] = $item['Gia'];
+            if (isset($item['PhanTramGiam'])) {
+                $item['GiaKM'] = $item['Gia'] * (1 - $item['PhanTramGiam'] / 100);
+            }
+        }
+        return $item;
     }
     public function getHotProducts($limit = 8)
     {
