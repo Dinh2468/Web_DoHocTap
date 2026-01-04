@@ -568,6 +568,12 @@ if (
                 </a>
             </li>
             <li>
+                <a href="/Web_DoHocTap/admin/Views/Nhaphang/index.php"
+                    class="<?php echo (strpos($current_page, 'Views/Nhaphang') !== false) ? 'active' : ''; ?>">
+                    Quản lý kho
+                </a>
+            </li>
+            <li>
                 <a href="/Web_DoHocTap/admin/Views/Sanpham/index.php"
                     class="<?php echo (strpos($current_page, 'Views/Sanpham') !== false) ? 'active' : ''; ?>">
                     Quản lý sản phẩm
