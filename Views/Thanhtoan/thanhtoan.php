@@ -235,25 +235,49 @@ include_once '../includes/header.php';
             <div class="section-title" style="font-size: 15px; color: #2E7D32; font-weight: bold;">Chọn ưu đãi dành cho bạn</div>
             <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px;">
                 <?php
-                // Lấy các chương trình khuyến mãi còn hạn
                 $today = date('Y-m-d');
                 $sqlKM = "SELECT * FROM khuyenmai WHERE NgayKetThuc >= ? AND NgayBatDau <= ?";
                 $listKM = $spModel->query($sqlKM, [$today, $today])->fetchAll();
 
                 if ($listKM):
                     foreach ($listKM as $km):
-                        // Giả sử DieuKienApDung lưu số tiền tối thiểu (ví dụ: 200000)
-                        $minAmount = (int)$km['DieuKienApDung'];
-                        $isEligible = ($tongTien >= $minAmount); // Kiểm tra điều kiện
+                        // 1. Trích xuất số tiền tối thiểu từ chuỗi "DieuKienApDung"
+                        preg_match_all('!\d+!', $km['DieuKienApDung'], $matches);
+                        $val = isset($matches[0][0]) ? (int)$matches[0][0] : 0;
+                        $minAmount = (str_contains(strtolower($km['DieuKienApDung']), 'k')) ? $val * 1000 : $val;
+
+                        // 2. Mặc định điều kiện là đúng nếu đủ tiền
+                        $isEligible = ($tongTien >= $minAmount);
+                        $reason = "";
+
+                        // 3. Kiểm tra riêng cho loại khuyến mãi Bút ký (Dựa trên tên hoặc mô tả)
+                        if (str_contains(mb_strtolower($km['TenKM']), 'bút ký') || str_contains(mb_strtolower($km['DieuKienApDung']), 'bút ký')) {
+                            $hasPen = false;
+                            foreach ($ds_sanpham as $item) {
+                                // Truy vấn kiểm tra MaLoai của sản phẩm
+                                $spCheck = $spModel->query("SELECT MaLoai FROM sanpham WHERE MaSP = ?", [$item['MaSP']])->fetch();
+                                if ($spCheck && $spCheck['MaLoai'] == 1) { // 1 là Mã loại Bút - Viết trong SQL của bạn
+                                    $hasPen = true;
+                                    break;
+                                }
+                            }
+                            if (!$hasPen) {
+                                $isEligible = false;
+                                $reason = " (Chỉ áp dụng cho Bút)";
+                            }
+                        }
                 ?>
                         <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; border: 1px dashed <?php echo $isEligible ? '#4CAF50' : '#ccc'; ?>; background: <?php echo $isEligible ? '#f1f8e9' : '#f5f5f5'; ?>; border-radius: 5px; opacity: <?php echo $isEligible ? '1' : '0.6'; ?>;">
                             <div>
-                                <strong style="color: #2E7D32;"><?php echo $km['TenKM']; ?></strong>
-                                <br><small style="color: #666; font-size: 11px;">Đơn tối thiểu: <?php echo number_format($minAmount, 0, ',', '.'); ?>đ</small>
+                                <strong style="color: #2E7D32;"><?php echo $km['TenKM']; ?> (<?php echo $km['PhanTramGiam']; ?>%)</strong>
+                                <br><small style="color: #666; font-size: 11px;">
+                                    <?php echo $km['DieuKienApDung']; ?>
+                                    <span style="color: #d32f2f; font-weight: bold;"><?php echo $reason; ?></span>
+                                </small>
                             </div>
                             <?php if ($isEligible): ?>
-                                <button type="button"
-                                    onclick="applyDiscount('<?php echo $km['TenKM']; ?>', <?php echo $km['PhanTramGiam']; ?>)"
+                                <button type="button" class="btn-apply-km"
+                                    onclick="applyDiscount('<?php echo $km['TenKM']; ?>', <?php echo $km['PhanTramGiam']; ?>, this)"
                                     style="background: #4CAF50; color: white; border: none; padding: 5px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold;">
                                     Áp dụng
                                 </button>
@@ -262,7 +286,7 @@ include_once '../includes/header.php';
                             <?php endif; ?>
                         </div>
                     <?php endforeach; ?>
-
+                <?php else: ?>
                     <p style="font-size: 12px; color: #999; font-style: italic;">Hiện không có chương trình khuyến mãi nào.</p>
                 <?php endif; ?>
             </div>
@@ -288,10 +312,12 @@ include_once '../includes/header.php';
 <script>
     let originalTotal = <?php echo $tongTien; ?>;
 
-    function applyDiscount(tenKM, phanTram) {
+    function applyDiscount(tenKM, phanTram, btnElement) {
+        let originalTotal = <?php echo $tongTien; ?>; // Lấy tổng tiền từ PHP
         let discountAmount = originalTotal * (phanTram / 100);
         let finalTotal = originalTotal - discountAmount;
 
+        // 1. Cập nhật hiển thị giá tiền
         const totalDisplay = document.querySelector('.total-price span:last-child');
         totalDisplay.innerHTML = `
         <div style="font-size: 13px; color: #d32f2f; font-weight: normal; margin-bottom: 5px;">
@@ -306,8 +332,19 @@ include_once '../includes/header.php';
         </div>
     `;
 
+        // 2. Gán giá trị vào input hidden để gửi về Controller
         document.getElementById('selected_coupon_name').value = tenKM;
         document.getElementById('final_total_input').value = finalTotal;
+
+        // 3. Hiệu ứng nút bấm: Reset tất cả các nút khác về trạng thái ban đầu
+        document.querySelectorAll('.btn-apply-km').forEach(btn => {
+            btn.innerText = 'Áp dụng';
+            btn.style.background = '#4CAF50';
+        });
+
+        // 4. Cập nhật trạng thái nút hiện tại
+        btnElement.innerText = '✓ Đã áp dụng';
+        btnElement.style.background = '#2E7D32'; // Đổi sang màu xanh đậm hơn
     }
 </script>
 <?php include_once '../includes/footer.php'; ?>

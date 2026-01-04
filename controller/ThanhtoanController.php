@@ -55,10 +55,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         // Lấy lại thông tin KM từ DB để kiểm tra điều kiện thực tế
         $checkKM = $db->query("SELECT * FROM khuyenmai WHERE TenKM = ?", [$tenKM])->fetch();
 
-        if ($checkKM && $ghMoi['TongTien'] < (int)$checkKM['DieuKienApDung']) {
-            // Nếu không đủ điều kiện thực tế, reset lại giá tiền gốc để tránh gian lận
-            $tongTienFinal = $ghMoi['TongTien'];
-            $ghiChuFull = $_POST['ghiChu'] . " (Mã KM $tenKM không hợp lệ)";
+        if ($checkKM) {
+            // Trích xuất số thực tế từ cột DieuKienApDung tương tự như trên giao diện
+            preg_match_all('!\d+!', $checkKM['DieuKienApDung'], $matches);
+            $val = isset($matches[0][0]) ? (int)$matches[0][0] : 0;
+            $realCondition = (str_contains(strtolower($checkKM['DieuKienApDung']), 'k')) ? $val * 1000 : $val;
+
+            if ($ghMoi['TongTien'] < $realCondition) {
+                // Nếu không đủ điều kiện thực tế, reset lại giá tiền gốc
+                $tongTienFinal = $ghMoi['TongTien'];
+                $ghiChuFull = $_POST['ghiChu'] . " (Mã KM $tenKM không hợp lệ)";
+            }
         }
     }
     // --- BƯỚC 3: LƯU ĐƠN HÀNG ---
