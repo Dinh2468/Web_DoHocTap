@@ -576,6 +576,10 @@ if (
                     Khách hàng
                 </a>
             </li>
+            <li><a href="/Web_DoHocTap/admin/Views/Nhanvien/index.php"
+                    class="<?php echo (strpos($current_page, 'Views/Nhanvien') !== false) ? 'active' : ''; ?>">
+                    Nhân viên
+                </a></li>
         </ul>
     </aside>
     <main class="main-content">

@@ -149,13 +149,12 @@ $customers = $db->query($sql, $params)->fetchAll();
     function toggleAccountStatus(maTK, isChecked) {
         const status = isChecked ? 1 : 0;
 
-        // Gửi yêu cầu cập nhật trạng thái qua AJAX
         fetch(`../../Controller/AdminUserController.php?action=toggle_status&id=${maTK}&status=${status}`)
             .then(response => response.json())
             .then(data => {
                 if (!data.success) {
                     alert("Lỗi: " + data.message);
-                    location.reload(); // Tải lại trang nếu cập nhật thất bại
+                    location.reload();
                 }
             })
             .catch(error => {
@@ -167,12 +166,11 @@ $customers = $db->query($sql, $params)->fetchAll();
     function openProfile(maKH) {
         const modal = document.getElementById('customerModal');
 
-        // Gọi AJAX lấy dữ liệu
         fetch(`../../Controller/AdminUserController.php?action=get_details&id=${maKH}`)
             .then(res => res.json())
             .then(data => {
                 const cust = data.customer;
-                // Đổ dữ liệu vào phần thông tin cá nhân
+
                 document.getElementById('detAvatar').innerText = cust.HoTen.charAt(0);
                 document.getElementById('detName').innerText = cust.HoTen;
                 document.getElementById('detID').innerText = '#KH' + cust.MaKH;

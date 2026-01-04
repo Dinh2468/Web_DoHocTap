@@ -61,7 +61,8 @@ $thuongHieu = $db->query("SELECT * FROM thuonghieu")->fetchAll();
                 <div class="form-group">
                     <label class="form-label">Số lượng tồn</label>
                     <input type="number" name="soLuong" class="form-control"
-                        value="<?php echo $product['SoLuongTon']; ?>" required>
+                        value="<?php echo $product['SoLuongTon']; ?>" required min="0"
+                        oninput="if(this.value < 0) this.value = 0;">
                 </div>
             </div>
 

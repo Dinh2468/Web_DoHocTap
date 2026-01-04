@@ -16,21 +16,26 @@ switch ($action) {
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $tenSP = $_POST['tenSP'];
             $maLoai = $_POST['maLoai'];
-
-            // Ép kiểu về số để tránh lỗi chuỗi rỗng
             $gia = !empty($_POST['gia']) ? (float)$_POST['gia'] : 0;
             $soLuong = !empty($_POST['soLuong']) ? (int)$_POST['soLuong'] : 0;
-
-            $maTH = !empty($_POST['maTH']) ? $_POST['maTH'] : null;
-            $maNCC = !empty($_POST['maNCC']) ? $_POST['maNCC'] : null;
             $moTa = $_POST['moTa'] ?? '';
-
-            // Logic xử lý ảnh (giữ nguyên của bạn)...
+            if ($soLuong < 0) {
+                $soLuong = 0; // Đảm bảo không bao giờ là số âm khi vào DB
+            }
+            // Xử lý Upload Ảnh
+            $hinhAnh = 'default.jpg'; // Giá trị mặc định nếu không up ảnh
+            if (isset($_FILES['hinhAnh']) && $_FILES['hinhAnh']['error'] == 0) {
+                $targetDir = "../../assets/images/Sanpham/";
+                $fileName = time() . "_" . basename($_FILES["hinhAnh"]["name"]);
+                if (move_uploaded_file($_FILES["hinhAnh"]["tmp_name"], $targetDir . $fileName)) {
+                    $hinhAnh = $fileName;
+                }
+            }
 
             try {
-                $sql = "INSERT INTO sanpham (TenSP, MoTa, Gia, SoLuongTon, HinhAnh, MaLoai, MaNCC, MaTH) 
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-                $db->query($sql, [$tenSP, $moTa, $gia, $soLuong, $hinhAnh, $maLoai, $maNCC, $maTH]);
+                $sql = "INSERT INTO sanpham (TenSP, MoTa, Gia, SoLuongTon, HinhAnh, MaLoai) 
+                    VALUES (?, ?, ?, ?, ?, ?)";
+                $db->query($sql, [$tenSP, $moTa, $gia, $soLuong, $hinhAnh, $maLoai]);
 
                 header("Location: ../Views/Sanpham/index.php?msg=success");
                 exit();
@@ -47,7 +52,9 @@ switch ($action) {
             $gia = !empty($_POST['gia']) ? (float)$_POST['gia'] : 0;
             $soLuong = !empty($_POST['soLuong']) ? (int)$_POST['soLuong'] : 0;
             $moTa = $_POST['moTa'];
-
+            if ($soLuong < 0) {
+                $soLuong = 0; // Đảm bảo không bao giờ là số âm khi vào DB
+            }
             // Xử lý ảnh: Nếu có ảnh mới thì dùng ảnh mới, không thì giữ ảnh cũ
             $hinhAnh = $_POST['hinhAnhCu'];
             if (isset($_FILES['hinhAnh']) && $_FILES['hinhAnh']['error'] == 0) {

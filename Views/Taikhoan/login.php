@@ -16,20 +16,35 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = $_POST['username'];
     $password = $_POST['password'];
 
-    $query = "SELECT tk.*, kh.MaKH, kh.HoTen FROM taikhoan tk 
+    $query = "SELECT tk.*, 
+                 kh.HoTen as TenKH, 
+                 nv.HoTen as TenNV
+          FROM taikhoan tk 
           LEFT JOIN khachhang kh ON tk.MaTK = kh.MaTK 
+          LEFT JOIN nhanvien nv ON tk.MaTK = nv.MaTK 
           WHERE tk.TenDangNhap = ? AND tk.MatKhau = ?";
 
     $stmt = $db->query($query, [$username, $password]);
     $user = $stmt->fetch();
-
     if ($user) {
         if (isset($user['TrangThai']) && $user['TrangThai'] == 0) {
             $error = "Tài khoản của bạn đã bị khóa.";
         } else {
-            $_SESSION['user_id'] = $user['MaKH'];
-            $_SESSION['user_name'] = !empty($user['HoTen']) ? $user['HoTen'] : $user['TenDangNhap'];
+            // Logic gán tên hiển thị ưu tiên Nhân viên
+            if (!empty($user['TenNV'])) {
+                // Nếu là nhân viên và có họ tên trong bảng nhanvien
+                $displayName = $user['TenNV'];
+            } elseif (!empty($user['TenKH'])) {
+                // Nếu là khách hàng và có họ tên trong bảng khachhang
+                $displayName = $user['TenKH'];
+            } else {
+                // Trường hợp cuối cùng mới dùng tên đăng nhập
+                $displayName = $user['TenDangNhap'];
+            }
 
+            // Quan trọng: Lưu vào session để header.php sử dụng
+            $_SESSION['user_id'] = $user['MaTK'];
+            $_SESSION['user_name'] = $displayName;
             $_SESSION['user_role'] = $user['VaiTro'];
 
             if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
