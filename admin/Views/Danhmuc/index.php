@@ -8,13 +8,11 @@ if ($_SESSION['user_role'] !== 'Quản trị viên') {
 $db = new Db();
 $categories = $db->query("SELECT * FROM loaisp ORDER BY MaLoai DESC")->fetchAll();
 ?>
-
 <div class="main-content-inner">
     <header class="main-header">
         <h2>Quản lý Danh mục sản phẩm</h2>
         <button onclick="openModal('add')" class="btn-filter" style="background: var(--primary-color);">+ Thêm danh mục</button>
     </header>
-
     <div class="table-container">
         <table>
             <thead>
@@ -37,7 +35,6 @@ $categories = $db->query("SELECT * FROM loaisp ORDER BY MaLoai DESC")->fetchAll(
                                     onclick="openModal('edit', <?php echo htmlspecialchars(json_encode($cat)); ?>)">
                                     Sửa
                                 </button>
-
                                 <a href="../../controller/AdminDanhmucController.php?action=delete&id=<?php echo $cat['MaLoai']; ?>"
                                     class="btn-action btn-delete"
                                     onclick="return confirm('Xóa danh mục này?')">
@@ -51,7 +48,6 @@ $categories = $db->query("SELECT * FROM loaisp ORDER BY MaLoai DESC")->fetchAll(
         </table>
     </div>
 </div>
-
 <div id="categoryModal" class="modal" style="display:none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5);">
     <div style="background: white; margin: 10% auto; padding: 20px; width: 400px; border-radius: 8px;">
         <h3 id="modalTitle">Thêm danh mục</h3>
@@ -72,13 +68,11 @@ $categories = $db->query("SELECT * FROM loaisp ORDER BY MaLoai DESC")->fetchAll(
         </form>
     </div>
 </div>
-
 <script>
     function openModal(type, data = null) {
         const modal = document.getElementById('categoryModal');
         const form = document.getElementById('categoryForm');
         const title = document.getElementById('modalTitle');
-
         modal.style.display = 'block';
         if (type === 'edit' && data) {
             title.innerText = 'Chỉnh sửa danh mục';

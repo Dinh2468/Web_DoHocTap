@@ -1,9 +1,8 @@
 <?php
-// vị trí Views/includes/header.php
+// Views/includes/header.php
 ?>
 <!DOCTYPE html>
 <html lang="vi">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,7 +15,6 @@
             --text-color: #333333;
             --white: #FFFFFF;
         }
-
         .header,
         .footer {
             background-color: #2E7D32;
@@ -25,26 +23,19 @@
             /* Chữ màu trắng */
             padding: 20px 0;
         }
-
         .footer a {
             color: #E8F5E9;
-            /* Link trong footer màu trắng ngà */
             text-decoration: none;
         }
-
         .footer a:hover {
             text-decoration: underline;
         }
-
         /* Thanh menu bên dưới Header */
         .navbar {
             background-color: #FFFFFF;
             border-bottom: 1px solid #ddd;
-            /* Đường gạch chân nhẹ */
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-            /* Bóng mờ nhẹ */
         }
-
         /* Nút Đăng nhập trên menu */
         .btn-login-nav {
             background-color: #4CAF50;
@@ -54,11 +45,8 @@
             padding: 5px 15px;
             border: none;
         }
-
-        /* Tiêu đề section: "Sản phẩm mới", "Sản phẩm nổi bật" */
         h3.section-title {
             color: #2E7D32;
-            /* Đồng bộ màu với Header */
             text-transform: uppercase;
             font-weight: bold;
             margin-top: 40px;
@@ -66,8 +54,6 @@
             position: relative;
             display: inline-block;
         }
-
-        /* Tạo dấu gạch chân nhỏ dưới tiêu đề cho đẹp */
         h3.section-title::after {
             content: '';
             display: block;
@@ -75,108 +61,86 @@
             height: 3px;
             background-color: #4CAF50;
             margin: 10px auto 0;
-            /* Căn giữa gạch chân */
         }
     </style>
     <!DOCTYPE html>
     <html lang="vi">
-
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Cửa Hàng Thể Thao - Trang Chủ</title>
         <style>
-            /* --- 1. CÀI ĐẶT CHUNG & BIẾN MÀU SẮC --- */
             :root {
                 --primary-color: #2E7D32;
-                /* Xanh lá đậm (Header/Footer) */
                 --accent-color: #4CAF50;
-                /* Xanh lá tươi (Nút bấm/Điểm nhấn) */
                 --bg-color: #F9F9F9;
-                /* Màu nền trang (Xám rất nhạt) */
                 --text-color: #333333;
-                /* Màu chữ chính */
                 --white: #FFFFFF;
             }
-
             * {
                 margin: 0;
                 padding: 0;
                 box-sizing: border-box;
             }
-
             body {
                 font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
                 background-color: var(--bg-color);
                 color: var(--text-color);
                 line-height: 1.6;
             }
-
             a {
                 text-decoration: none;
                 color: inherit;
             }
-
             ul {
                 list-style: none;
             }
-
-            /* Class tiện ích để căn giữa nội dung */
             .container {
                 width: 1200px;
                 max-width: 100%;
                 margin: 0 auto;
                 padding: 0 15px;
             }
-
-            /* --- 2. HEADER (PHẦN ĐẦU TRANG) --- */
+            /* HEADER */
             .top-header {
                 background-color: var(--primary-color);
                 color: var(--white);
                 padding: 20px 0;
                 text-align: center;
             }
-
             .top-header h1 {
                 font-size: 28px;
                 text-transform: uppercase;
                 letter-spacing: 1px;
             }
-
-            /* --- 3. MENU ĐIỀU HƯỚNG (NAVBAR) --- */
+            /* MENU */
             .navbar {
                 background-color: var(--white);
                 box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
                 position: sticky;
-                /* Dính menu lên đầu khi cuộn */
                 top: 0;
                 z-index: 1000;
             }
-
             .nav-content {
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
                 height: 60px;
             }
-
             .nav-links {
                 display: flex;
                 gap: 20px;
                 font-weight: 600;
                 font-size: 14px;
             }
-
             .nav-links li a:hover {
                 color: var(--accent-color);
             }
-
             .search-login-area {
                 display: flex;
                 align-items: center;
                 gap: 15px;
             }
-
             .search-box {
                 padding: 5px 10px;
                 border: 1px solid #ddd;
@@ -184,7 +148,6 @@
                 outline: none;
                 width: 200px;
             }
-
             .btn-login {
                 background-color: var(--accent-color);
                 color: var(--white);
@@ -194,15 +157,12 @@
                 font-weight: bold;
                 transition: background 0.3s;
             }
-
             .btn-login:hover {
                 background-color: #388E3C;
             }
-
-            /* --- 4. BANNER --- */
+            /* BANNER */
             .banner {
                 background-color: #E8F5E9;
-                /* Màu xanh nhạt của poster */
                 padding: 40px 0;
                 margin-bottom: 30px;
                 display: flex;
@@ -210,40 +170,32 @@
                 justify-content: space-between;
                 overflow: hidden;
             }
-
             .banner-content {
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
                 width: 100%;
             }
-
             .banner-img-side {
                 width: 250px;
                 height: auto;
             }
-
             .banner-text {
                 text-align: center;
                 flex: 1;
             }
-
             .banner-text h2 {
                 font-size: 36px;
                 color: #2E7D32;
                 margin-bottom: 10px;
                 text-transform: uppercase;
             }
-
             .banner-text p {
                 font-size: 18px;
                 color: #555;
                 margin-bottom: 20px;
             }
-
-
-
-            /* --- 5. KHU VỰC SẢN PHẨM (CHUNG) --- */
+            /* SẢN PHẨM */
             .section-title {
                 text-align: center;
                 text-transform: uppercase;
@@ -251,7 +203,6 @@
                 margin-bottom: 30px;
                 position: relative;
             }
-
             .section-title::after {
                 content: '';
                 display: block;
@@ -260,15 +211,12 @@
                 background-color: var(--accent-color);
                 margin: 10px auto;
             }
-
             .product-grid {
                 display: grid;
                 grid-template-columns: repeat(4, 1fr);
-
                 gap: 20px;
                 margin-bottom: 50px;
             }
-
             .product-card {
                 background-color: var(--white);
                 border-radius: 8px;
@@ -278,32 +226,24 @@
                 text-align: center;
                 padding-bottom: 15px;
             }
-
             .product-card:hover {
                 transform: translateY(-5px);
-
             }
-
             .product-img {
                 width: 100%;
                 height: 200px;
                 background-color: #ddd;
-
                 margin-bottom: 10px;
             }
-
             .product-name {
                 font-weight: bold;
                 margin-bottom: 5px;
                 font-size: 15px;
             }
-
             .product-price {
                 color: #d32f2f;
-
                 font-weight: bold;
             }
-
             .btn-view-all {
                 display: block;
                 width: 150px;
@@ -315,14 +255,11 @@
                 border-radius: 5px;
                 font-weight: 600;
             }
-
             .btn-view-all:hover {
                 background-color: #ccc;
             }
-
             .btn-buy-now {
                 background-color: #4CAF50;
-                /* Màu xanh lá tươi giống Poster */
                 color: white;
                 border: none;
                 padding: 8px 20px;
@@ -333,46 +270,35 @@
                 width: 80%;
                 transition: 0.3s;
             }
-
             .btn-buy-now {
                 background-color: #4CAF50;
-                /* Xanh lá tươi đồng bộ Poster */
                 color: white;
                 border: none;
                 padding: 10px 25px;
                 border-radius: 25px;
-                /* Bo tròn hoàn toàn giống nút Mua Ngay */
                 font-weight: bold;
                 font-size: 14px;
                 cursor: pointer;
                 margin-top: 15px;
                 width: auto;
-                /* Chiều rộng tự động theo chữ */
                 min-width: 100px;
                 box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-                /* Đổ bóng nhẹ cho nổi bật */
                 transition: all 0.3s ease;
                 text-transform: uppercase;
-                /* Chữ in hoa giống Poster */
                 letter-spacing: 1px;
             }
-
             .btn-buy-now:hover {
                 background-color: #2E7D32;
-                /* Đậm hơn khi di chuột giống Header */
                 transform: translateY(-2px);
-                /* Nhích nhẹ lên khi hover */
                 box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
             }
-
-            /* --- 6. TIN TỨC --- */
+            /* TIN TỨC */
             .news-grid {
                 display: grid;
                 grid-template-columns: repeat(3, 1fr);
                 gap: 20px;
                 margin-bottom: 50px;
             }
-
             .news-card img {
                 width: 100%;
                 height: 150px;
@@ -380,24 +306,20 @@
                 background-color: #ddd;
                 border-radius: 5px;
             }
-
             .news-title {
                 margin-top: 10px;
                 font-weight: bold;
                 font-size: 14px;
             }
-
-            /* --- 7. THƯƠNG HIỆU --- */
+            /* THƯƠNG HIỆU */
             .brands-row {
                 display: flex;
                 justify-content: space-between;
                 margin-bottom: 50px;
                 gap: 10px;
             }
-
             .brand-box {
                 background-color: var(--accent-color);
-
                 color: white;
                 flex: 1;
                 padding: 15px;
@@ -405,7 +327,6 @@
                 border-radius: 4px;
                 font-size: 12px;
             }
-
             /* Index */
             .section-wrapper {
                 margin: 30px auto;
@@ -414,7 +335,6 @@
                 border-radius: 8px;
                 box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
             }
-
             .section-header {
                 display: flex;
                 justify-content: space-between;
@@ -423,19 +343,16 @@
                 border-bottom: 2px solid #f0f0f0;
                 padding-bottom: 10px;
             }
-
             .product-slider {
                 display: flex;
                 overflow-x: hidden;
                 scroll-behavior: smooth;
                 gap: 15px;
             }
-
             .slider-item {
                 min-width: calc(25% - 12px);
                 position: relative;
             }
-
             .nav-arrow {
                 position: absolute;
                 width: 35px;
@@ -447,15 +364,12 @@
                 z-index: 10;
                 box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
             }
-
             .prev {
                 left: -18px;
             }
-
             .next {
                 right: -18px;
             }
-
             .discount-badge {
                 position: absolute;
                 top: 10px;
@@ -467,22 +381,18 @@
                 border-radius: 50%;
                 z-index: 5;
             }
-
-            /* --- 8. FOOTER (CHÂN TRANG) --- */
+            /* FOOTER */
             footer {
                 background-color: var(--primary-color);
                 color: var(--white);
                 padding: 40px 0;
                 font-size: 14px;
             }
-
             .footer-grid {
                 display: grid;
                 grid-template-columns: repeat(4, 1fr);
-                /* 4 cột thông tin */
                 gap: 30px;
             }
-
             .footer-col h4 {
                 margin-bottom: 15px;
                 text-transform: uppercase;
@@ -490,26 +400,21 @@
                 padding-bottom: 10px;
                 display: inline-block;
             }
-
             .footer-col ul li {
                 margin-bottom: 8px;
             }
-
             .footer-col ul li a:hover {
                 text-decoration: underline;
             }
-
-            /* Thiết lập vị trí và giao diện cho thông báo ở góc */
+            /* thông báo */
             #toast-container {
                 position: fixed;
                 top: 20px;
                 right: 20px;
                 z-index: 10000;
             }
-
             .toast {
                 background-color: #2E7D32;
-                /* Màu xanh lá đậm đồng bộ với Header */
                 color: white;
                 padding: 16px 24px;
                 border-radius: 8px;
@@ -521,21 +426,17 @@
                 font-weight: bold;
                 animation: slideIn 0.3s ease-out;
             }
-
             @keyframes slideIn {
                 from {
                     transform: translateX(100%);
                     opacity: 0;
                 }
-
                 to {
                     transform: translateX(0);
                     opacity: 1;
                 }
             }
-
             /* Tên đăng nhập */
-
             .user-info-nav span {
                 font-size: 14px;
                 background: #E8F5E9;
@@ -543,12 +444,10 @@
                 border-radius: 15px;
                 border: 1px solid #4CAF50;
             }
-
             .user-dropdown {
                 position: relative;
                 display: inline-block;
             }
-
             .user-name-btn {
                 background: #E8F5E9;
                 padding: 5px 15px;
@@ -561,8 +460,7 @@
                 align-items: center;
                 gap: 5px;
             }
-
-            /* Menu ẩn mặc định */
+            /* Menu ẩn */
             .dropdown-content {
                 display: none;
                 position: absolute;
@@ -575,8 +473,6 @@
                 margin-top: 10px;
                 overflow: hidden;
             }
-
-            /* Link trong menu */
             .dropdown-content a {
                 color: #333;
                 padding: 12px 16px;
@@ -586,30 +482,24 @@
                 border-bottom: 1px solid #eee;
                 transition: background 0.2s;
             }
-
             .dropdown-content a:hover {
                 background-color: #f1f1f1;
                 color: #2E7D32;
             }
-
-            /* Hiển thị menu khi có class 'show' */
             .show {
                 display: block;
                 animation: fadeIn 0.2s ease-out;
             }
-
             @keyframes fadeIn {
                 from {
                     opacity: 0;
                     transform: translateY(-10px);
                 }
-
                 to {
                     opacity: 1;
                     transform: translateY(0);
                 }
             }
-
             .cart-badge {
                 position: absolute;
                 top: -5px;
@@ -630,14 +520,12 @@
             }
         </style>
     </head>
-
 <body>
     <header class="top-header">
         <div class="container">
             <h1>THIÊN ĐƯỜNG DỤNG CỤ HỌC TẬP</h1>
         </div>
     </header>
-
     <nav class="navbar">
         <div class="container nav-content">
             <ul class="nav-links">
@@ -647,7 +535,6 @@
                 <li><a href="#gioithieu">Giới thiệu</a></li>
                 <li><a href="#">Tin tức</a></li>
             </ul>
-
             <div class="search-login-area">
                 <form action="/Web_DoHocTap/index.php" method="GET">
                     <input type="text" name="search" class="search-box" placeholder="Tìm kiếm bút, vở...">
@@ -670,13 +557,10 @@
                     <?php
                     $count = 0;
                     if (isset($_SESSION['user_id'])) {
-                        // Nếu đã ĐĂNG NHẬP: Lấy số lượng từ Database
                         require_once __DIR__ . '/../../classes/Giohang.class.php';
                         require_once __DIR__ . '/../../classes/Chitiet_Giohang.class.php';
-
                         $ghModel = new Giohang();
                         $ctghModel = new Chitiet_Giohang();
-
                         $gioHang = $ghModel->lay_theo_khach_hang($_SESSION['user_id']);
                         if ($gioHang) {
                             $items = $ctghModel->lay_danh_sach_trong_gio($gioHang['MaGH']);
@@ -685,17 +569,14 @@
                             }
                         }
                     } else {
-                        // Nếu CHƯA ĐĂNG NHẬP: Lấy từ Session
                         if (isset($_SESSION['cart'])) {
                             $count = array_sum($_SESSION['cart']);
                         }
                     }
-
                     if ($count > 0) {
                         echo "<span class='cart-badge'>$count</span>";
                     }
                     ?>
-
                 </a>
             </div>
         </div>
@@ -704,8 +585,6 @@
         function toggleDropdown() {
             document.getElementById("myDropdown").classList.toggle("show");
         }
-
-        // Đóng menu nếu người dùng click ra ngoài vùng dropdown
         window.onclick = function(event) {
             if (!event.target.matches('.user-name-btn')) {
                 var dropdowns = document.getElementsByClassName("dropdown-content");

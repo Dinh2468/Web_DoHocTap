@@ -3,26 +3,18 @@
 session_start();
 require_once '../../classes/Sanpham.class.php';
 require_once '../../classes/Danhgia.class.php';
-
 $spModel = new Sanpham();
 $dgModel = new Danhgia();
-
-// 1. Lấy mã sản phẩm từ URL
 $id = isset($_GET['id']) ? $_GET['id'] : null;
-$sp = $spModel->getById($id); // Bạn cần đảm bảo trong Sanpham.class.php có hàm getById
-
+$sp = $spModel->getById($id);
 if (!$sp) {
     echo "Sản phẩm không tồn tại!";
     exit;
 }
-
-// 2. Lấy danh sách đánh giá
 $ds_danhgia = $dgModel->lay_theo_san_pham($id);
 $sao_tb = $dgModel->tinh_sao_trung_binh($id);
-
 include_once '../../Views/includes/header.php';
 ?>
-
 <style>
     .detail-container {
         display: flex;
@@ -103,46 +95,43 @@ include_once '../../Views/includes/header.php';
         margin-bottom: 5px;
     }
 </style>
-
 <div class="container">
     <div class="detail-container">
         <div class="detail-left">
             <img src="/Web_DoHocTap/assets/images/Sanpham/<?php echo $sp['HinhAnh']; ?>"
                 onerror="this.src='https://via.placeholder.com/500x500?text=No+Image'">
         </div>
-
         <div class="detail-right">
             <h1><?php echo $sp['TenSP']; ?></h1>
             <div class="rating-stars">
                 <?php echo str_repeat('★', floor($sao_tb)) . str_repeat('☆', 5 - floor($sao_tb)); ?>
                 (<?php echo $sao_tb; ?>/5)
             </div>
-
             <div class="product-price">
                 <?php
-                // Kiểm tra xem GiaKM có tồn tại và nhỏ hơn giá gốc không
-                $giaKM = isset($sp['GiaKM']) ? $sp['GiaKM'] : $sp['Gia'];
-
-                if ($giaKM < $sp['Gia']): ?>
-                    <span style="text-decoration: line-through; color: #999; font-size: 18px;">
-                        <?php echo number_format($sp['Gia'], 0, ',', '.'); ?>đ
-                    </span>
-                    <span style="color: #d32f2f; font-size: 24px; font-weight: bold; margin-left: 10px;">
-                        <?php echo number_format($giaKM, 0, ',', '.'); ?>đ
-                    </span>
-                <?php else: ?>
-                    <span style="font-size: 24px; font-weight: bold;">
-                        <?php echo number_format($sp['Gia'], 0, ',', '.'); ?>đ
-                    </span>
-                <?php endif; ?>
-            </div>
-
-            <div class="description">
-                <strong>Mô tả sản phẩm:</strong><br>
-                <?php echo nl2br($sp['MoTa']); // Giả sử bảng sanpham có cột MoTa 
+                //$giaKM = isset($sp['GiaKM']) ? $sp['GiaKM'] : $sp['Gia'];
+                //if ($giaKM < $sp['Gia']): 
+                ?>
+                <!-- <span style="text-decoration: line-through; color: #999; font-size: 18px;">
+                    <?php echo number_format($sp['Gia'], 0, ',', '.');
+                    ?>đ
+                </span> -->
+                <!-- <span style="color: #d32f2f; font-size: 24px; font-weight: bold; margin-left: 10px;">
+                    <?php echo number_format($giaKM, 0, ',', '.'); ?>đ
+                </span> -->
+                <? //php else: 
+                ?>
+                <span style="font-size: 24px; font-weight: bold;">
+                    <?php echo number_format($sp['Gia'], 0, ',', '.'); ?> đ
+                </span>
+                <?php //endif; 
                 ?>
             </div>
-
+            <div class="description">
+                <strong>Mô tả sản phẩm:</strong><br>
+                <?php echo nl2br($sp['MoTa']);
+                ?>
+            </div>
             <form id="formadd_giohang" action="../../controller/GiohangController.php" method="POST">
                 <input type="hidden" name="maSP" value="<?php echo $sp['MaSP']; ?>">
                 <input type="hidden" name="ajax" value="1">
@@ -150,13 +139,11 @@ include_once '../../Views/includes/header.php';
                 <input type="number" name="sl" value="1" min="1" style="width: 60px; padding: 10px; margin-right: 10px;">
                 <button type="submit" class="btn-add-cart">THÊM VÀO GIỎ HÀNG</button>
             </form>
-
             <div id="toast-message" style="display: none; position: fixed; top: 20px; right: 20px; background: #2E7D32; color: white; padding: 15px 25px; border-radius: 5px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 10001; font-weight: bold;">
                 ✓ Đã thêm vào giỏ hàng thành công!
             </div>
         </div>
     </div>
-
     <div class="review-section">
         <h3>Khách hàng đánh giá</h3>
         <?php if ($ds_danhgia): ?>
@@ -176,21 +163,16 @@ include_once '../../Views/includes/header.php';
 <script>
     document.getElementById('formadd_giohang').onsubmit = function(e) {
         e.preventDefault();
-
         const formData = new FormData(this);
         const toast = document.getElementById('toast-message');
-
         fetch(this.action, {
                 method: 'POST',
                 body: formData
             })
             .then(response => response.text())
             .then(data => {
-                // Kiểm tra dữ liệu trả về từ Controller
                 if (data.trim() === "Thành công") {
-                    // Hiển thị thông báo ở góc
                     toast.style.display = 'block';
-                    // Tự động ẩn sau 3 giây
                     setTimeout(() => {
                         toast.style.display = 'none';
                     }, 3000);

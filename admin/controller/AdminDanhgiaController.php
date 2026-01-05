@@ -4,7 +4,6 @@ session_start();
 require_once __DIR__ . '/../../classes/DB.class.php';
 $db = new Db();
 $action = $_GET['action'] ?? '';
-
 if ($action == 'delete') {
     $id = $_GET['id'];
     try {

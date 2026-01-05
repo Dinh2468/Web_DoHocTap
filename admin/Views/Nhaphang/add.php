@@ -5,12 +5,10 @@ $db = new Db();
 $suppliers = $db->query("SELECT * FROM nhacungcap")->fetchAll();
 $products = $db->query("SELECT * FROM sanpham")->fetchAll();
 ?>
-
 <div class="main-content-inner">
     <header class="main-header">
         <h2>Tạo phiếu nhập kho</h2>
     </header>
-
     <div class="form-container">
         <form action="../../controller/AdminNhaphangController.php?action=create" method="POST">
             <div class="form-row">
@@ -33,7 +31,6 @@ $products = $db->query("SELECT * FROM sanpham")->fetchAll();
                     <input type="date" name="ngayNhap" class="form-control" value="<?php echo date('Y-m-d'); ?>" required>
                 </div>
             </div>
-
             <div id="nccDetailBox" style="display: none; background: #f8fdf9; border: 1px dashed #2E7D32; padding: 15px; border-radius: 8px; margin-bottom: 20px; font-size: 14px;">
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                     <p><strong>📍 Địa chỉ:</strong> <span id="displayAddress">N/A</span></p>
@@ -41,7 +38,6 @@ $products = $db->query("SELECT * FROM sanpham")->fetchAll();
                     <p><strong>✉️ Email:</strong> <span id="displayEmail">N/A</span></p>
                 </div>
             </div>
-
             <h3 style="margin: 20px 0;">Danh sách sản phẩm nhập</h3>
             <table id="importTable" class="table">
                 <thead>
@@ -77,7 +73,6 @@ $products = $db->query("SELECT * FROM sanpham")->fetchAll();
                     </tr>
                 </tfoot>
             </table>
-
             <div style="margin-top: 15px; display: flex; justify-content: space-between;">
                 <button type="button" class="btn-clear" onclick="addRow()" style="background: #e3f2fd; color: #1976d2; border: 1px solid #bbdefb;">+ Thêm dòng sản phẩm</button>
                 <button type="submit" class="btn-save">XÁC NHẬN NHẬP KHO</button>
@@ -91,14 +86,9 @@ $products = $db->query("SELECT * FROM sanpham")->fetchAll();
         const qty = row.querySelector('input[name="quantities[]"]').value;
         const price = row.querySelector('input[name="prices[]"]').value;
         const subtotal = row.querySelector('.subtotal');
-
         const total = qty * price;
         subtotal.innerText = new Intl.NumberFormat('vi-VN').format(total) + 'đ';
     }
-
-
-
-    // Lưu mẫu dòng HTML để thêm nhanh
     const productOptions = `<?php foreach ($products as $sp): ?>
     <option value="<?php echo $sp['MaSP']; ?>"><?php echo htmlspecialchars($sp['TenSP']); ?></option>
 <?php endforeach; ?>`;
@@ -129,16 +119,13 @@ $products = $db->query("SELECT * FROM sanpham")->fetchAll();
     function calculateTotal() {
         let grandTotal = 0;
         const rows = document.querySelectorAll('#importBody tr');
-
         rows.forEach(row => {
             const qty = parseFloat(row.querySelector('.qty').value) || 0;
             const price = parseFloat(row.querySelector('.price').value) || 0;
             const subtotal = qty * price;
-
             row.querySelector('.subtotal').innerText = new Intl.NumberFormat('vi-VN').format(subtotal) + 'đ';
             grandTotal += subtotal;
         });
-
         document.getElementById('grandTotal').innerText = new Intl.NumberFormat('vi-VN').format(grandTotal) + 'đ';
     }
 
@@ -146,44 +133,29 @@ $products = $db->query("SELECT * FROM sanpham")->fetchAll();
         const select = document.getElementById('selectNCC');
         const selectedOption = select.options[select.selectedIndex];
         const infoBox = document.getElementById('nccDetailBox');
-
         if (select.value === "") {
             infoBox.style.display = 'none';
             return;
         }
-
-        // Lấy dữ liệu từ thuộc tính data đã gán ở trên
         const address = selectedOption.getAttribute('data-address');
         const phone = selectedOption.getAttribute('data-phone');
         const email = selectedOption.getAttribute('data-email');
-
-        // Cập nhật nội dung hiển thị
         document.getElementById('displayAddress').innerText = address || "Chưa cập nhật";
         document.getElementById('displayPhone').innerText = phone || "Chưa cập nhật";
         document.getElementById('displayEmail').innerText = email || "Chưa cập nhật";
-
-        // Hiện khung thông tin với hiệu ứng mượt
         infoBox.style.display = 'block';
     }
-
-
     document.addEventListener('DOMContentLoaded', function() {
         const storageKey = 'import_form_draft';
         const form = document.querySelector('form');
-
-        // --- 1. HÀM KHÔI PHỤC DỮ LIỆU ---
         const savedData = JSON.parse(localStorage.getItem(storageKey));
         if (savedData) {
-            // Khôi phục Nhà cung cấp và Ngày
             document.getElementById('selectNCC').value = savedData.maNCC || '';
             document.querySelector('input[name="ngayNhap"]').value = savedData.ngayNhap || '<?php echo date("Y-m-d"); ?>';
-            updateNCCInfo(); // Cập nhật khung hiển thị địa chỉ/email
-
-            // Khôi phục danh sách sản phẩm
+            updateNCCInfo();
             if (savedData.items && savedData.items.length > 0) {
                 const tbody = document.getElementById('importBody');
-                tbody.innerHTML = ''; // Xóa dòng mặc định để nạp lại
-
+                tbody.innerHTML = '';
                 savedData.items.forEach((item, index) => {
                     const newRow = document.createElement('tr');
                     newRow.innerHTML = `
@@ -199,14 +171,11 @@ $products = $db->query("SELECT * FROM sanpham")->fetchAll();
                     <td>${index > 0 ? `<button type="button" onclick="removeRow(this)" style="color: #d32f2f; border: none; background: none; cursor: pointer; font-size: 20px;">&times;</button>` : ''}</td>
                 `;
                     tbody.appendChild(newRow);
-                    // Gán giá trị cho select sản phẩm
                     newRow.querySelector('select').value = item.id;
                 });
-                calculateTotal(); // Tính lại tổng tiền sau khi nạp
+                calculateTotal();
             }
-        }
-
-        // --- 2. HÀM LƯU DỮ LIỆU KHI CÓ THAY ĐỔI ---
+        } -
         form.addEventListener('input', function() {
             const items = [];
             document.querySelectorAll('#importBody tr').forEach(row => {
@@ -216,7 +185,6 @@ $products = $db->query("SELECT * FROM sanpham")->fetchAll();
                     price: row.querySelector('.price').value
                 });
             });
-
             const draft = {
                 maNCC: document.getElementById('selectNCC').value,
                 ngayNhap: document.querySelector('input[name="ngayNhap"]').value,
@@ -224,10 +192,7 @@ $products = $db->query("SELECT * FROM sanpham")->fetchAll();
             };
             localStorage.setItem(storageKey, JSON.stringify(draft));
         });
-
-        // --- 3. XÓA BẢN NHÁP KHI HOÀN TẤT ---
         form.addEventListener('submit', () => localStorage.removeItem(storageKey));
-        // Nút "Nhập lại" (nếu có)
         const btnClear = document.querySelector('.btn-clear-all');
         if (btnClear) btnClear.addEventListener('click', () => {
             if (confirm("Xóa toàn bộ nội dung đang nhập?")) {

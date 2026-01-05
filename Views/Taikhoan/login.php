@@ -1,21 +1,15 @@
 <?php
 // Views/Taikhoan/login.php
 session_start();
-
 require_once __DIR__ . '/../../classes/DB.class.php';
 require_once __DIR__ . '/../../classes/Giohang.class.php';
 require_once __DIR__ . '/../../classes/Chitiet_Giohang.class.php';
 require_once __DIR__ . '/../../classes/Sanpham.class.php';
-
 $error = "";
-
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-
     $db = new Db();
-
     $username = $_POST['username'];
     $password = $_POST['password'];
-
     $query = "SELECT tk.*, 
                  kh.HoTen as TenKH, 
                  nv.HoTen as TenNV
@@ -23,30 +17,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
           LEFT JOIN khachhang kh ON tk.MaTK = kh.MaTK 
           LEFT JOIN nhanvien nv ON tk.MaTK = nv.MaTK 
           WHERE tk.TenDangNhap = ? AND tk.MatKhau = ?";
-
     $stmt = $db->query($query, [$username, $password]);
     $user = $stmt->fetch();
     if ($user) {
         if (isset($user['TrangThai']) && $user['TrangThai'] == 0) {
             $error = "Tài khoản của bạn đã bị khóa.";
         } else {
-            // Logic gán tên hiển thị ưu tiên Nhân viên
             if (!empty($user['TenNV'])) {
-                // Nếu là nhân viên và có họ tên trong bảng nhanvien
                 $displayName = $user['TenNV'];
             } elseif (!empty($user['TenKH'])) {
-                // Nếu là khách hàng và có họ tên trong bảng khachhang
                 $displayName = $user['TenKH'];
             } else {
-                // Trường hợp cuối cùng mới dùng tên đăng nhập
                 $displayName = $user['TenDangNhap'];
             }
-
-            // Quan trọng: Lưu vào session để header.php sử dụng
             $_SESSION['user_id'] = $user['MaTK'];
             $_SESSION['user_name'] = $displayName;
             $_SESSION['user_role'] = $user['VaiTro'];
-
             if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
                 $ghModel = new Giohang();
                 $ctghModel = new Chitiet_Giohang();
@@ -57,24 +43,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 } else {
                     $maGH = $gioHang['MaGH'];
                 }
-
                 foreach ($_SESSION['cart'] as $maSP => $sl) {
                     $sp = $spModel->getById($maSP);
                     if ($sp) {
                         $ctghModel->them_san_pham($maGH, $maSP, $sl, $sp['Gia']);
                     }
                 }
-                // Tính lại tổng tiền 
                 if (method_exists($ghModel, 'tinh_lai_tong_tien')) {
                     $ghModel->tinh_lai_tong_tien($maGH);
                 }
                 unset($_SESSION['cart']);
             }
             if ($user['VaiTro'] == 'Quản trị viên' || $user['VaiTro'] == 'Nhân viên') {
-
                 header("Location: ../../admin/index.php");
             } else {
-
                 if (isset($_GET['redirect']) && $_GET['redirect'] == 'giohang') {
                     header("Location: ../giohang.php");
                 } else {
@@ -88,7 +70,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="vi">
 
@@ -219,7 +200,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <?php if ($error): ?>
             <div class="error-msg"><?php echo $error; ?></div>
         <?php endif; ?>
-
         <form method="POST" action="">
             <label>Tên tài khoản</label>
             <input type="text" name="username" placeholder="Nhập tên tài khoản..." required>
@@ -227,14 +207,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <input type="password" name="password" placeholder="Nhập mật khẩu..." required>
             <button type="submit" class="btn-login">Đăng nhập</button>
         </form>
-
         <div class="divider">HOẶC</div>
-
         <button type="button" class="btn-google" onclick="alert('Tính năng Đăng nhập Google đang được phát triển!')">
             <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18">
             Tiếp tục với Google
         </button>
-
         <div class="register-link">
             Bạn chưa có tài khoản? <a href="dangky.php">Đăng ký ngay</a>
         </div>

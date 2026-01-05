@@ -1,37 +1,31 @@
 <?php
+// Views/Thanhtoan/thanhtoan.php
 session_start();
 require_once '../../classes/DB.class.php';
 require_once '../../classes/Giohang.class.php';
 require_once '../../classes/Chitiet_Giohang.class.php';
 require_once '../../classes/Sanpham.class.php';
-
 $ghModel = new Giohang();
 $ctghModel = new Chitiet_Giohang();
 $spModel = new Sanpham();
-
 $ds_sanpham = [];
 $tongTien = 0;
 $userInfo = null;
-
 $errorCount = 0;
 if (!empty($ds_sanpham)) {
     foreach ($ds_sanpham as $item) {
-
         $checkSp = $spModel->query("SELECT SoLuongTon FROM sanpham WHERE MaSP = ?", [$item['MaSP']])->fetch();
         if ($item['SoLuong'] > $checkSp['SoLuongTon']) {
             $errorCount++;
-
             $ctghModel->cap_nhat_so_luong($gioHang['MaGH'], $item['MaSP'], $checkSp['SoLuongTon']);
         }
     }
 }
-
 if ($errorCount > 0) {
     $ghModel->tinh_lai_tong_tien($gioHang['MaGH']);
     header("Location: ../giohang.php?error=out_of_stock");
     exit();
 }
-
 if (!isset($_SESSION['user_id'])) {
     header("Location: ../Taikhoan/login.php");
     exit();
@@ -54,10 +48,8 @@ if (isset($_SESSION['user_id'])) {
         }
     }
 }
-
 include_once '../includes/header.php';
 ?>
-
 <style>
     .checkout-container {
         display: flex;
@@ -182,17 +174,14 @@ include_once '../includes/header.php';
         margin-top: 20px;
     }
 </style>
-
 <div class="checkout-container">
     <div class="checkout-left">
         <div class="shop-name">THIÊN ĐƯỜNG DỤNG CỤ HỌC TẬP</div>
         <!-- <div class="breadcrumb">Giỏ hàng > Thông tin giao hàng > Phương thức thanh toán</div> -->
-
         <div class="section-title">Thông tin giao hàng</div>
         <?php if (!isset($_SESSION['user_id'])): ?>
             <div style="font-size: 14px; margin-bottom: 15px;">Bạn đã có tài khoản? <a href="Taikhoan/login.php" style="color: #338dbc;">Đăng nhập</a></div>
         <?php endif; ?>
-
         <form action="../../controller/ThanhtoanController.php" method="POST">
             <div class="form-group">
                 <input type="text" name="hoTen" class="form-control" placeholder="Họ và tên"
@@ -218,7 +207,6 @@ include_once '../includes/header.php';
             <button type="submit" class="btn-submit">THANH TOÁN</button>
         </form>
     </div>
-
     <div class="checkout-right">
         <?php foreach ($ds_sanpham as $sp): ?>
             <div class="product-item">
@@ -230,33 +218,25 @@ include_once '../includes/header.php';
                 <div style="font-size: 14px;"><?php echo number_format($sp['DonGia'] * $sp['SoLuong'], 0, ',', '.'); ?>đ</div>
             </div>
         <?php endforeach; ?>
-
-        <div style="margin: 25px 0; border-top: 1px solid #e1e1e1; padding-top: 25px;">
+        <!-- <div style="margin: 25px 0; border-top: 1px solid #e1e1e1; padding-top: 25px;">
             <div class="section-title" style="font-size: 15px; color: #2E7D32; font-weight: bold;">Chọn ưu đãi dành cho bạn</div>
             <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px;">
                 <?php
                 $today = date('Y-m-d');
                 $sqlKM = "SELECT * FROM khuyenmai WHERE NgayKetThuc >= ? AND NgayBatDau <= ?";
                 $listKM = $spModel->query($sqlKM, [$today, $today])->fetchAll();
-
                 if ($listKM):
                     foreach ($listKM as $km):
-                        // 1. Trích xuất số tiền tối thiểu từ chuỗi "DieuKienApDung"
                         preg_match_all('!\d+!', $km['DieuKienApDung'], $matches);
                         $val = isset($matches[0][0]) ? (int)$matches[0][0] : 0;
                         $minAmount = (str_contains(strtolower($km['DieuKienApDung']), 'k')) ? $val * 1000 : $val;
-
-                        // 2. Mặc định điều kiện là đúng nếu đủ tiền
                         $isEligible = ($tongTien >= $minAmount);
                         $reason = "";
-
-                        // 3. Kiểm tra riêng cho loại khuyến mãi Bút ký (Dựa trên tên hoặc mô tả)
                         if (str_contains(mb_strtolower($km['TenKM']), 'bút ký') || str_contains(mb_strtolower($km['DieuKienApDung']), 'bút ký')) {
                             $hasPen = false;
                             foreach ($ds_sanpham as $item) {
-                                // Truy vấn kiểm tra MaLoai của sản phẩm
                                 $spCheck = $spModel->query("SELECT MaLoai FROM sanpham WHERE MaSP = ?", [$item['MaSP']])->fetch();
-                                if ($spCheck && $spCheck['MaLoai'] == 1) { // 1 là Mã loại Bút - Viết trong SQL của bạn
+                                if ($spCheck && $spCheck['MaLoai'] == 1) {
                                     $hasPen = true;
                                     break;
                                 }
@@ -290,11 +270,9 @@ include_once '../includes/header.php';
                     <p style="font-size: 12px; color: #999; font-style: italic;">Hiện không có chương trình khuyến mãi nào.</p>
                 <?php endif; ?>
             </div>
-
             <input type="hidden" id="selected_coupon_name" name="tenKM" value="">
             <input type="hidden" id="final_total_input" name="final_total" value="<?php echo $tongTien; ?>">
-        </div>
-
+        </div> -->
         <!-- <div class="summary-line">
             <span>Tạm tính</span>
             <span><?php echo number_format($tongTien, 0, ',', '.'); ?>đ</span>
@@ -313,11 +291,9 @@ include_once '../includes/header.php';
     let originalTotal = <?php echo $tongTien; ?>;
 
     function applyDiscount(tenKM, phanTram, btnElement) {
-        let originalTotal = <?php echo $tongTien; ?>; // Lấy tổng tiền từ PHP
+        let originalTotal = <?php echo $tongTien; ?>;
         let discountAmount = originalTotal * (phanTram / 100);
         let finalTotal = originalTotal - discountAmount;
-
-        // 1. Cập nhật hiển thị giá tiền
         const totalDisplay = document.querySelector('.total-price span:last-child');
         totalDisplay.innerHTML = `
         <div style="font-size: 13px; color: #d32f2f; font-weight: normal; margin-bottom: 5px;">
@@ -331,20 +307,14 @@ include_once '../includes/header.php';
             ${new Intl.NumberFormat('vi-VN').format(finalTotal)}đ
         </div>
     `;
-
-        // 2. Gán giá trị vào input hidden để gửi về Controller
         document.getElementById('selected_coupon_name').value = tenKM;
         document.getElementById('final_total_input').value = finalTotal;
-
-        // 3. Hiệu ứng nút bấm: Reset tất cả các nút khác về trạng thái ban đầu
         document.querySelectorAll('.btn-apply-km').forEach(btn => {
             btn.innerText = 'Áp dụng';
             btn.style.background = '#4CAF50';
         });
-
-        // 4. Cập nhật trạng thái nút hiện tại
         btnElement.innerText = '✓ Đã áp dụng';
-        btnElement.style.background = '#2E7D32'; // Đổi sang màu xanh đậm hơn
+        btnElement.style.background = '#2E7D32';
     }
 </script>
 <?php include_once '../includes/footer.php'; ?>

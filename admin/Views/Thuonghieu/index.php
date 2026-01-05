@@ -8,13 +8,11 @@ if ($_SESSION['user_role'] !== 'Quản trị viên') {
 $db = new Db();
 $brands = $db->query("SELECT * FROM thuonghieu ORDER BY MaTH DESC")->fetchAll();
 ?>
-
 <div class="main-content-inner">
     <header class="main-header">
         <h2>Quản lý Thương hiệu</h2>
         <button onclick="openModal('add')" class="btn-filter" style="background: var(--primary-color);">+ Thêm thương hiệu</button>
     </header>
-
     <div class="table-container">
         <table>
             <thead>
@@ -48,28 +46,23 @@ $brands = $db->query("SELECT * FROM thuonghieu ORDER BY MaTH DESC")->fetchAll();
         </table>
     </div>
 </div>
-
 <div id="brandModal" class="modal" style="display:none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5);">
     <div style="background: white; margin: 8% auto; padding: 25px; width: 450px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.3);">
         <h3 id="modalTitle" style="color: var(--primary-color); margin-bottom: 20px;">Thêm thương hiệu</h3>
         <form id="brandForm" action="../../controller/AdminThuonghieuController.php?action=add" method="POST">
             <input type="hidden" name="maTH" id="maTH">
-
             <div class="form-group">
                 <label class="form-label">Tên thương hiệu</label>
                 <input type="text" name="tenTH" id="tenTH" class="form-control" required>
             </div>
-
             <div class="form-group" style="margin-top: 15px;">
                 <label class="form-label">Quốc gia</label>
                 <input type="text" name="quocGia" id="quocGia" class="form-control" placeholder="Ví dụ: Việt Nam, Nhật Bản...">
             </div>
-
             <div class="form-group" style="margin-top: 15px;">
                 <label class="form-label">Mô tả</label>
                 <textarea name="moTa" id="moTa" class="form-control" rows="3"></textarea>
             </div>
-
             <div style="margin-top: 25px; text-align: right; display: flex; justify-content: flex-end; gap: 10px;">
                 <button type="button" onclick="closeModal()" class="btn-clear">Hủy</button>
                 <button type="submit" class="btn-save">Lưu lại</button>
@@ -77,13 +70,11 @@ $brands = $db->query("SELECT * FROM thuonghieu ORDER BY MaTH DESC")->fetchAll();
         </form>
     </div>
 </div>
-
 <script>
     function openModal(type, data = null) {
         const modal = document.getElementById('brandModal');
         const form = document.getElementById('brandForm');
         const title = document.getElementById('modalTitle');
-
         modal.style.display = 'block';
         if (type === 'edit' && data) {
             title.innerText = 'Chỉnh sửa thương hiệu';
@@ -102,8 +93,6 @@ $brands = $db->query("SELECT * FROM thuonghieu ORDER BY MaTH DESC")->fetchAll();
     function closeModal() {
         document.getElementById('brandModal').style.display = 'none';
     }
-
-    // Đóng modal khi click ra ngoài
     window.onclick = function(event) {
         if (event.target == document.getElementById('brandModal')) closeModal();
     }

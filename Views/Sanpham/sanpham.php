@@ -1,43 +1,30 @@
 <?php
+// Views/Sanpham/sanpham.php
 session_start();
 require_once '../../classes/Sanpham.class.php';
 require_once '../../classes/Loaisanpham.class.php';
-
-
 $spModel = new Sanpham();
 $loaiModel = new Loaisanpham();
-
-// Lấy danh sách loại sản phẩm cho menu bên trái
 $ds_loai = $loaiModel->lay_tat_ca();
 $ds_thuonghieu = $spModel->query("SELECT * FROM thuonghieu")->fetchAll();
-
 $limit = 21;
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 if ($page < 1) $page = 1;
 $offset = ($page - 1) * $limit;
-
-
 $maLoai = isset($_GET['loai']) ? $_GET['loai'] : null;
 $priceFilters = isset($_GET['price']) ? $_GET['price'] : [];
 $brandFilters = isset($_GET['brand']) ? $_GET['brand'] : [];
-// Lấy dữ liệu sản phẩm và tổng số lượng để tính trang
 $totalProducts = $spModel->countAll($maLoai, $priceFilters, $brandFilters);
 $totalPages = ceil($totalProducts / $limit);
-
-// Kiểm tra nếu có bất kỳ bộ lọc nào được kích hoạt
 if ($maLoai || !empty($priceFilters) || !empty($brandFilters)) {
-    // SỬA THÀNH: truyền thêm biến offset và limit đã tính ở trên vào
     $ds_sanpham = $spModel->filterAdvanced($maLoai, $priceFilters, $brandFilters, $offset, $limit);
     $title = "Kết quả lọc sản phẩm";
 } else {
-    // Dòng này bạn đã gọi đúng hàm phân trang rồi
     $ds_sanpham = $spModel->getAll_phantrang($offset, $limit);
     $title = "Tất cả sản phẩm";
 }
-
 include_once '../../Views/includes/header.php';
 ?>
-
 <style>
     .product-page-container {
         display: flex;
@@ -45,7 +32,6 @@ include_once '../../Views/includes/header.php';
         margin-top: 30px;
     }
 
-    /* Cột danh mục bên trái */
     .sidebar {
         width: 25%;
         border-right: 1px solid #ddd;
@@ -77,7 +63,6 @@ include_once '../../Views/includes/header.php';
         padding-left: 5px;
     }
 
-    /* Cột sản phẩm bên phải */
     .main-products {
         width: 75%;
     }
@@ -87,7 +72,6 @@ include_once '../../Views/includes/header.php';
         font-size: 24px;
     }
 
-    /* Grid sản phẩm 3 cột cho trang này */
     .product-list-grid {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
@@ -117,10 +101,8 @@ include_once '../../Views/includes/header.php';
         border-color: var(--primary-color);
     }
 </style>
-
 <div class="container">
     <div class="product-page-container">
-
         <aside class="sidebar">
             <div style="background: #fcfcfc; padding: 20px; border: 1px solid #eee; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.02);">
                 <h3 style="color: var(--primary-color); font-size: 18px; border-bottom: 2px solid var(--accent-color); padding-bottom: 10px; margin-bottom: 15px;">
@@ -142,17 +124,14 @@ include_once '../../Views/includes/header.php';
                     <?php endforeach; ?>
                 </ul>
             </div>
-
             <form action="sanpham.php" method="GET">
                 <?php if (isset($_GET['loai'])): ?>
                     <input type="hidden" name="loai" value="<?php echo $_GET['loai']; ?>">
                 <?php endif; ?>
-
                 <div style="background: #fcfcfc; padding: 20px; border: 1px solid #eee; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.02);">
                     <h3 style="color: var(--primary-color); font-size: 18px; border-bottom: 2px solid var(--accent-color); padding-bottom: 10px; margin-bottom: 15px;">
                         Bộ lọc
                     </h3>
-
                     <div style="margin-bottom: 25px;">
                         <p style="font-weight: bold; margin-bottom: 12px; font-size: 15px; color: #444;">Khoảng giá</p>
                         <?php
@@ -172,7 +151,6 @@ include_once '../../Views/includes/header.php';
                             </label>
                         <?php endforeach; ?>
                     </div>
-
                     <div class="filter-group">
                         <p style="font-weight: bold; margin-bottom: 12px; font-size: 15px; color: #444;">Thương hiệu</p>
                         <div style="display: grid; grid-template-columns: 1fr; gap: 8px;">
@@ -185,7 +163,6 @@ include_once '../../Views/includes/header.php';
                             <?php endforeach; ?>
                         </div>
                     </div>
-
                     <button type="submit" class="btn-buy-now" style="width: 100%; margin-top: 20px; font-size: 13px; padding: 12px; letter-spacing: 0.5px;">
                         ÁP DỤNG BỘ LỌC
                     </button>
@@ -196,10 +173,8 @@ include_once '../../Views/includes/header.php';
                 </div>
             </form>
         </aside>
-
         <main class="main-products">
             <h2><?php echo $title; ?></h2>
-
             <div class="product-list-grid">
                 <?php if ($ds_sanpham): ?>
                     <?php foreach ($ds_sanpham as $sp): ?>
@@ -217,27 +192,22 @@ include_once '../../Views/includes/header.php';
                     <p>Không có sản phẩm nào trong mục này.</p>
                 <?php endif; ?>
             </div>
-
             <div class="pagination">
                 <?php if ($page > 1): ?>
                     <a href="?page=<?php echo $page - 1; ?>&<?php echo http_build_query(array_merge($_GET, ['page' => $page - 1])); ?>" class="page-item">
                         < </a>
                         <?php endif; ?>
-
                         <?php for ($i = 1; $i <= $totalPages; $i++): ?>
                             <a href="?<?php echo http_build_query(array_merge($_GET, ['page' => $i])); ?>"
                                 class="page-item <?php echo ($i == $page) ? 'active' : ''; ?>">
                                 <?php echo $i; ?>
                             </a>
                         <?php endfor; ?>
-
                         <?php if ($page < $totalPages): ?>
                             <a href="?<?php echo http_build_query(array_merge($_GET, ['page' => $page + 1])); ?>" class="page-item">></a>
                         <?php endif; ?>
             </div>
         </main>
-
     </div>
 </div>
-
 <?php include_once '../../Views/includes/footer.php'; ?>

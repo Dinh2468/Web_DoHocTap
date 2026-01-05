@@ -8,13 +8,11 @@ if ($_SESSION['user_role'] !== 'Quản trị viên') {
 $db = new Db();
 $promotions = $db->query("SELECT * FROM khuyenmai ORDER BY NgayKetThuc DESC")->fetchAll();
 ?>
-
 <div class="main-content-inner">
     <header class="main-header">
         <h2>Quản lý Khuyến mãi</h2>
         <a href="add.php" class="btn-filter" style="background: var(--primary-color); text-decoration: none;">+ Tạo khuyến mãi mới</a>
     </header>
-
     <div class="table-container">
         <table>
             <thead>

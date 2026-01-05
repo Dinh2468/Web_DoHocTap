@@ -3,16 +3,14 @@
 ?>
 <div class="product-card">
     <a href="/Web_DoHocTap/Views/Sanpham/chitiet.php?id=<?php echo $sp['MaSP']; ?>" style="text-decoration: none; color: inherit;">
-        <img src="assets/images/Sanpham/<?php echo $sp['HinhAnh']; ?>" class="product-img">
+        <img src="/Web_DoHocTap/assets/images/Sanpham/<?php echo $sp['HinhAnh']; ?>" class="product-img">
         <div class="product-name"><?php echo $sp['TenSP']; ?></div>
-
         <div style="color: #FFD700; font-size: 12px; margin-bottom: 5px;">
             <?php
             $sao = $dgModel->tinh_sao_trung_binh($sp['MaSP']);
             echo str_repeat('★', floor($sao)) . str_repeat('☆', 5 - floor($sao));
             ?>
         </div>
-
         <div class="product-price">
             <?php if (isset($sp['GiaKM']) && $sp['GiaKM'] < $sp['Gia']): ?>
                 <span style="text-decoration: line-through; color: #999; font-size: 13px; margin-right: 5px;">

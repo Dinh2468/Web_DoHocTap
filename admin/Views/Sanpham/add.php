@@ -4,17 +4,14 @@ include_once '../../includes/header.php';
 $db = new Db();
 $loaiSP = $db->query("SELECT * FROM loaisp")->fetchAll();
 ?>
-
 <div class="main-content-inner">
     <header class="main-header">
         <h2>Thêm sản phẩm mới</h2>
         <a href="index.php" style="color: var(--primary-color); text-decoration: none;">← Quay lại danh sách</a>
     </header>
-
     <div class="table-container">
         <form action="../../Controller/AdminSanphamController.php?action=add" method="POST" enctype="multipart/form-data" id="productForm">
             <h3 style="margin-bottom: 20px; color: var(--primary-color); border-bottom: 1px solid #eee; padding-bottom: 10px;">THÔNG TIN CƠ BẢN</h3>
-
             <div class="form-row">
                 <div class="form-group">
                     <label class="form-label">Tên sản phẩm</label>
@@ -32,7 +29,6 @@ $loaiSP = $db->query("SELECT * FROM loaisp")->fetchAll();
                     </select>
                 </div>
             </div>
-
             <div class="form-row">
                 <div class="form-group">
                     <label class="form-label">Giá bán (VNĐ)</label>
@@ -45,18 +41,15 @@ $loaiSP = $db->query("SELECT * FROM loaisp")->fetchAll();
                         oninput="if(this.value < 0) this.value = 0;">
                 </div>
             </div>
-
             <div class="form-group" style="margin-bottom: 20px;">
                 <label class="form-label">Hình ảnh đại diện</label>
                 <input type="file" name="hinhAnh" class="form-control" accept="image/*" onchange="previewImage(this)">
                 <div id="imagePreview" style="margin-top: 10px;"></div>
             </div>
-
             <div class="form-group">
                 <label class="form-label">Mô tả chi tiết</label>
                 <textarea name="moTa" class="form-control" rows="5" placeholder="Viết mô tả giúp khách hàng hiểu rõ về sản phẩm..."></textarea>
             </div>
-
             <div style="text-align: right; margin-top: 30px;">
                 <button type="reset" id="btnReset" class="btn-clear" style="margin-right: 10px; cursor: pointer;">Hủy nhập</button>
                 <button type="submit" class="btn-save">LƯU SẢN PHẨM</button>
@@ -64,14 +57,12 @@ $loaiSP = $db->query("SELECT * FROM loaisp")->fetchAll();
         </form>
     </div>
 </div>
-
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const form = document.getElementById('productForm');
         const inputs = form.querySelectorAll('input:not([type="file"]), select, textarea');
         const storageKey = 'product_form_draft';
 
-        // 1. Khôi phục dữ liệu từ localStorage khi F5 trang
         const savedData = JSON.parse(localStorage.getItem(storageKey));
         if (savedData) {
             inputs.forEach(input => {
@@ -80,8 +71,6 @@ $loaiSP = $db->query("SELECT * FROM loaisp")->fetchAll();
                 }
             });
         }
-
-        // 2. Tự động lưu khi người dùng nhập liệu
         form.addEventListener('input', function() {
             const formData = {};
             inputs.forEach(input => {
@@ -91,13 +80,10 @@ $loaiSP = $db->query("SELECT * FROM loaisp")->fetchAll();
             });
             localStorage.setItem(storageKey, JSON.stringify(formData));
         });
-
-        // 3. Xóa bản nháp khi gửi thành công hoặc nhấn Hủy
         form.addEventListener('submit', () => localStorage.removeItem(storageKey));
         document.getElementById('btnReset').addEventListener('click', () => localStorage.removeItem(storageKey));
     });
 
-    // Hàm xem trước ảnh khi chọn file
     function previewImage(input) {
         const preview = document.getElementById('imagePreview');
         if (input.files && input.files[0]) {
@@ -109,5 +95,4 @@ $loaiSP = $db->query("SELECT * FROM loaisp")->fetchAll();
         }
     }
 </script>
-
 <?php include_once '../../includes/footer.php'; ?>

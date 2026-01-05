@@ -1,44 +1,31 @@
 <?php
+// Views/Donhang/chitiet_donhang.php
 session_start();
 require_once '../../classes/DB.class.php';
-
-// Kiểm tra đăng nhập
 if (!isset($_SESSION['user_id'])) {
     header("Location: ../Taikhoan/login.php");
     exit();
 }
-
-// Lấy mã đơn hàng từ URL
 $maDH = isset($_GET['id']) ? $_GET['id'] : 0;
 $db = new Db();
-
-// 1. Lấy thông tin chung của đơn hàng (Ngày đặt, Tổng tiền, Địa chỉ...)
 $sqlDH = "SELECT * FROM donhang WHERE MaDH = ? AND MaKH = ?";
 $donhang = $db->query($sqlDH, [$maDH, $_SESSION['user_id']])->fetch();
-
-// Nếu không tìm thấy đơn hàng hoặc đơn hàng không thuộc về khách này
 if (!$donhang) {
     echo "<script>alert('Không tìm thấy đơn hàng!'); window.location.href='lichsu_donhang.php';</script>";
     exit();
 }
-
-// 2. Lấy danh sách sản phẩm trong đơn hàng đó (kèm thông tin từ bảng sản phẩm)
 $sqlCT = "SELECT ct.*, sp.TenSP, sp.HinhAnh 
           FROM chitietdh ct 
           JOIN sanpham sp ON ct.MaSP = sp.MaSP 
           WHERE ct.MaDH = ?";
 $listSP = $db->query($sqlCT, [$maDH])->fetchAll();
-
-
 include_once '../includes/header.php';
 ?>
-
 <div class="container" style="margin-top: 30px; margin-bottom: 50px;">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
         <h2 style="color: #2E7D32;">Chi Tiết Đơn Hàng #<?php echo $maDH; ?></h2>
         <a href="lichsu_donhang.php" style="color: #338dbc; text-decoration: none;">← Quay lại lịch sử</a>
     </div>
-
     <div style="background: #f9f9f9; padding: 20px; border-radius: 8px; border: 1px solid #eee; margin-bottom: 25px; display: flex; gap: 50px;">
         <div>
             <p><strong>Ngày đặt:</strong> <?php echo date('d/m/Y H:i', strtotime($donhang['NgayDat'])); ?></p>
@@ -49,7 +36,6 @@ include_once '../includes/header.php';
             <p style="font-size: 20px; color: #d32f2f; font-weight: bold;"><?php echo number_format($donhang['TongTien'], 0, ',', '.'); ?>đ</p>
         </div>
     </div>
-
     <table style="width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
         <thead>
             <tr style="background-color: #f2f2f2; text-align: left;">
@@ -74,34 +60,27 @@ include_once '../includes/header.php';
                     <td style="padding: 15px; text-align: right; font-weight: bold;">
                         <?php echo number_format($sp['DonGia'] * $sp['SoLuong'], 0, ',', '.'); ?>đ
                     </td>
-
                     <?php
-                    $ngayDat = new DateTime($donhang['NgayDat']); // Lấy ngày đặt từ DB
+                    $ngayDat = new DateTime($donhang['NgayDat']);
                     $ngayHienTai = new DateTime();
                     $diff = $ngayHienTai->diff($ngayDat);
-                    $soNgay = $diff->days; // Tính số ngày chênh lệch
-                    $conHanDanhGia = ($soNgay <= 30); // Kiểm tra điều kiện 30 ngày
+                    $soNgay = $diff->days;
+                    $conHanDanhGia = ($soNgay <= 30);
                     ?>
-
                     <td style="padding: 15px; text-align: center; min-width: 200px;">
                         <?php if ($donhang['TrangThai'] === 'Hoàn thành'): ?>
                             <?php
-                            // 1. Tính toán thời gian còn lại (30 ngày từ ngày đặt hàng)
                             $ngayDat = new DateTime($donhang['NgayDat']);
                             $ngayHienTai = new DateTime();
                             $diff = $ngayHienTai->diff($ngayDat);
                             $daysPassed = $diff->days;
-                            $daysLeft = 30 - $daysPassed; // Thời hạn 30 ngày
-
+                            $daysLeft = 30 - $daysPassed;
                             if ($daysLeft >= 0): ?>
                                 <?php
-                                // 2. Kiểm tra số lượt đã đánh giá
                                 $sqlCount = "SELECT COUNT(*) FROM danhgia WHERE MaKH = ? AND MaSP = ? AND MaDH = ?";
                                 $daDanhGia = $db->query($sqlCount, [$_SESSION['user_id'], $sp['MaSP'], $maDH])->fetchColumn();
-
-                                $soLuongMua = $sp['SoLuong']; // Số lượng mua thực tế
+                                $soLuongMua = $sp['SoLuong'];
                                 $luotConLai = $soLuongMua - $daDanhGia;
-
                                 if ($luotConLai > 0): ?>
                                     <div style="margin-bottom: 8px;">
                                         <span style="display: block; font-size: 12px; color: #E65100; font-weight: bold;">
@@ -134,5 +113,4 @@ include_once '../includes/header.php';
         </tbody>
     </table>
 </div>
-
 <?php include_once '../includes/footer.php'; ?>

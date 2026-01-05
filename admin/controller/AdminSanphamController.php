@@ -2,15 +2,11 @@
 // admin/controller/AdminSanphamController.php
 session_start();
 require_once __DIR__ . '/../../classes/DB.class.php';
-
-// Kiểm tra quyền truy cập nhanh
 if (!isset($_SESSION['user_role']) || ($_SESSION['user_role'] !== 'Quản trị viên' && $_SESSION['user_role'] !== 'Nhân viên')) {
     exit("Truy cập bị từ chối");
 }
-
 $db = new Db();
 $action = $_GET['action'] ?? '';
-
 switch ($action) {
     case 'add':
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -20,10 +16,9 @@ switch ($action) {
             $soLuong = !empty($_POST['soLuong']) ? (int)$_POST['soLuong'] : 0;
             $moTa = $_POST['moTa'] ?? '';
             if ($soLuong < 0) {
-                $soLuong = 0; // Đảm bảo không bao giờ là số âm khi vào DB
+                $soLuong = 0;
             }
-            // Xử lý Upload Ảnh
-            $hinhAnh = 'default.jpg'; // Giá trị mặc định nếu không up ảnh
+            $hinhAnh = 'default.jpg';
             if (isset($_FILES['hinhAnh']) && $_FILES['hinhAnh']['error'] == 0) {
                 $targetDir = "../../assets/images/Sanpham/";
                 $fileName = time() . "_" . basename($_FILES["hinhAnh"]["name"]);
@@ -31,12 +26,10 @@ switch ($action) {
                     $hinhAnh = $fileName;
                 }
             }
-
             try {
                 $sql = "INSERT INTO sanpham (TenSP, MoTa, Gia, SoLuongTon, HinhAnh, MaLoai) 
                     VALUES (?, ?, ?, ?, ?, ?)";
                 $db->query($sql, [$tenSP, $moTa, $gia, $soLuong, $hinhAnh, $maLoai]);
-
                 header("Location: ../Views/Sanpham/index.php?msg=success");
                 exit();
             } catch (Exception $e) {
@@ -53,9 +46,8 @@ switch ($action) {
             $soLuong = !empty($_POST['soLuong']) ? (int)$_POST['soLuong'] : 0;
             $moTa = $_POST['moTa'];
             if ($soLuong < 0) {
-                $soLuong = 0; // Đảm bảo không bao giờ là số âm khi vào DB
+                $soLuong = 0;
             }
-            // Xử lý ảnh: Nếu có ảnh mới thì dùng ảnh mới, không thì giữ ảnh cũ
             $hinhAnh = $_POST['hinhAnhCu'];
             if (isset($_FILES['hinhAnh']) && $_FILES['hinhAnh']['error'] == 0) {
                 $targetDir = "../../assets/images/Sanpham/";
@@ -64,7 +56,6 @@ switch ($action) {
                     $hinhAnh = $fileName;
                 }
             }
-
             try {
                 $sql = "UPDATE sanpham SET TenSP=?, MoTa=?, Gia=?, SoLuongTon=?, HinhAnh=?, MaLoai=? WHERE MaSP=?";
                 $db->query($sql, [$tenSP, $moTa, $gia, $soLuong, $hinhAnh, $maLoai, $maSP]);

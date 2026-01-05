@@ -1,10 +1,9 @@
 <?php
-//admin/controller/AdminKhuyenmaiController.php
+// admin/controller/AdminKhuyenmaiController.php
 session_start();
 require_once __DIR__ . '/../../classes/DB.class.php';
 $db = new Db();
 $action = $_GET['action'] ?? '';
-
 if ($action == 'add' || $action == 'edit') {
     $tenKM = $_POST['tenKM'];
     $ngayBD = $_POST['ngayBatDau'];
@@ -12,7 +11,6 @@ if ($action == 'add' || $action == 'edit') {
     $phanTram = $_POST['phanTramGiam'];
     $dieuKien = $_POST['dieuKien'];
     $selectedProducts = $_POST['applied_products'] ?? [];
-
     if ($action == 'add') {
         $db->query(
             "INSERT INTO khuyenmai (TenKM, NgayBatDau, NgayKetThuc, PhanTramGiam, DieuKienApDung) VALUES (?, ?, ?, ?, ?)",
@@ -25,18 +23,13 @@ if ($action == 'add' || $action == 'edit') {
             "UPDATE khuyenmai SET TenKM=?, NgayBatDau=?, NgayKetThuc=?, PhanTramGiam=?, DieuKienApDung=? WHERE MaKM=?",
             [$tenKM, $ngayBD, $ngayKT, $phanTram, $dieuKien, $maKM]
         );
-        // Xóa liên kết cũ để cập nhật mới
         $db->query("DELETE FROM sp_km WHERE MaKM = ?", [$maKM]);
     }
-
-    // Lưu danh sách sản phẩm áp dụng
     foreach ($selectedProducts as $maSP) {
         $db->query("INSERT INTO sp_km (MaSP, MaKM) VALUES (?, ?)", [$maSP, $maKM]);
     }
-
     header("Location: ../Views/Khuyenmai/index.php?msg=success");
 }
-
 if ($action == 'delete') {
     $id = $_GET['id'];
     $db->query("DELETE FROM sp_km WHERE MaKM = ?", [$id]);

@@ -4,7 +4,6 @@ include_once '../../includes/header.php';
 $db = new Db();
 $products = $db->query("SELECT MaSP, TenSP FROM sanpham")->fetchAll();
 ?>
-
 <div class="main-content-inner">
     <div class="form-container">
         <form action="../../controller/AdminKhuyenmaiController.php?action=add" method="POST">
@@ -19,7 +18,6 @@ $products = $db->query("SELECT MaSP, TenSP FROM sanpham")->fetchAll();
                     <input type="number" name="phanTramGiam" class="form-control" min="1" max="100" required>
                 </div>
             </div>
-
             <div class="form-row">
                 <div class="form-group">
                     <label class="form-label">Ngày bắt đầu</label>
@@ -30,7 +28,6 @@ $products = $db->query("SELECT MaSP, TenSP FROM sanpham")->fetchAll();
                     <input type="date" name="ngayKetThuc" class="form-control" required>
                 </div>
             </div>
-
             <div class="form-group">
                 <label class="form-label">Sản phẩm áp dụng</label>
                 <div style="max-height: 200px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; border-radius: 8px;">
@@ -42,7 +39,6 @@ $products = $db->query("SELECT MaSP, TenSP FROM sanpham")->fetchAll();
                     <?php endforeach; ?>
                 </div>
             </div>
-
             <div style="margin-top: 25px; text-align: right;">
                 <button type="submit" class="btn-save">LƯU CHƯƠNG TRÌNH</button>
             </div>

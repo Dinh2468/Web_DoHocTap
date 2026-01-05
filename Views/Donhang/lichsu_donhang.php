@@ -1,20 +1,15 @@
 <?php
+// Views/Donhang/lichsu_donhang.php
 session_start();
 require_once '../../classes/DB.class.php';
-
-// Kiểm tra nếu chưa đăng nhập thì chuyển về trang login
 if (!isset($_SESSION['user_id'])) {
     header("Location: ../Taikhoan/login.php");
     exit();
 }
-
 $db = new Db();
 $maKH = $_SESSION['user_id'];
-
-// Lấy danh sách đơn hàng của khách hàng này
 $sql = "SELECT * FROM donhang WHERE MaKH = ? ORDER BY NgayDat DESC";
 $donhangs = $db->query($sql, [$maKH])->fetchAll();
-
 include_once '../includes/header.php';
 ?>
 <style>
@@ -26,17 +21,14 @@ include_once '../includes/header.php';
         vertical-align: middle;
         padding: 15px;
     }
-
     /* Căn lề riêng cho cột Mã Đơn nếu muốn trông tự nhiên hơn */
     .order-table td:first-child {
         font-weight: bold;
     }
-
     /* Khống chế độ rộng cột Thao tác để không bị dài quá mức */
     .col-action {
         width: 220px;
     }
-
     .action-group {
         display: flex;
         gap: 8px;
@@ -44,7 +36,6 @@ include_once '../includes/header.php';
         /* Căn giữa các nút trong ô Thao tác */
         align-items: center;
     }
-
     .status-badge {
         padding: 6px 12px;
         border-radius: 20px;
@@ -54,7 +45,6 @@ include_once '../includes/header.php';
         min-width: 100px;
         /* Đảm bảo các nhãn trạng thái có độ dài bằng nhau */
     }
-
     .btn-action {
         padding: 6px 12px;
         border-radius: 5px;
@@ -66,35 +56,29 @@ include_once '../includes/header.php';
         white-space: nowrap;
         /* Không cho chữ xuống dòng */
     }
-
     .btn-view {
         color: #338dbc;
         border-color: #338dbc;
         background: #fff;
     }
-
     .btn-view:hover {
         background: #338dbc;
         color: #fff;
     }
-
     .btn-cancel {
         color: #d32f2f;
         background: #FFEBEE;
         border-color: #ef9a9a;
     }
-
     .btn-cancel:hover {
         background: #d32f2f;
         color: #fff;
     }
 </style>
-
 <div class="container" style="margin-top: 30px; margin-bottom: 50px; min-height: 60vh;">
     <h2 style="color: #2E7D32; margin-bottom: 25px; border-bottom: 2px solid #4CAF50; padding-bottom: 10px;">
         Lịch sử mua hàng
     </h2>
-
     <?php if (empty($donhangs)): ?>
         <div style="text-align: center; padding: 50px; background: white; border-radius: 8px;">
             <p>Bạn chưa có đơn hàng nào.</p>
@@ -114,10 +98,8 @@ include_once '../includes/header.php';
             <tbody>
                 <?php foreach ($donhangs as $dh):
                     $maDH = $dh['MaDH'];
-
-                    // --- BỔ SUNG: Định nghĩa màu sắc trạng thái ---
                     $statusBg = '#FFF3E0';
-                    $statusColor = '#E65100'; // Mặc định: Chờ xử lý
+                    $statusColor = '#E65100';
                     switch ($dh['TrangThai']) {
                         case 'Hoàn thành':
                             $statusBg = '#E8F5E9';
@@ -132,8 +114,6 @@ include_once '../includes/header.php';
                             $statusColor = '#C62828';
                             break;
                     }
-
-                    // Logic đếm sản phẩm chưa đánh giá
                     $showReviewBadge = false;
                     $pendingReviews = 0;
                     if ($dh['TrangThai'] === 'Hoàn thành') {
@@ -157,7 +137,6 @@ include_once '../includes/header.php';
                             <span class="status-badge" style="background: <?php echo $statusBg; ?>; color: <?php echo $statusColor; ?>;">
                                 <?php echo $dh['TrangThai']; ?>
                             </span>
-
                             <?php if ($showReviewBadge): ?>
                                 <div style="margin-top: 5px;">
                                     <span style="background: #FFF3E0; color: #E65100; font-size: 10px; padding: 2px 8px; border-radius: 10px; border: 1px solid #FFB74D; font-weight: bold;">

@@ -2,31 +2,22 @@
 // admin/index.php
 include_once 'includes/header.php';
 $db = new Db();
-
 $countOrderPending = $db->query("SELECT COUNT(*) as total FROM donhang WHERE TrangThai = 'Chờ xử lý'")->fetch();
-
 $lowStock = $db->query("SELECT COUNT(*) as total FROM sanpham WHERE SoLuongTon < 5")->fetch();
-
 $countProduct = $db->query("SELECT COUNT(*) as total FROM sanpham")->fetch();
-
-
 if ($_SESSION['user_role'] === 'Quản trị viên') {
     $countCustomer = $db->query("SELECT COUNT(*) as total FROM khachhang")->fetch();
     $totalRevenue = $db->query("SELECT SUM(TongTien) as total FROM donhang WHERE TrangThai = 'Hoàn thành'")->fetch();
-
     $chartData = $db->query("SELECT DATE(NgayDat) as date, SUM(TongTien) as revenue 
                          FROM donhang 
                          WHERE TrangThai IN ('Hoàn thành', 'Đang giao') 
                          AND NgayDat >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
                          GROUP BY DATE(NgayDat) ORDER BY date ASC")->fetchAll();
 }
-
-
 $recentOrders = $db->query("SELECT dh.*, kh.HoTen FROM donhang dh 
                              LEFT JOIN khachhang kh ON dh.MaKH = kh.MaKH 
                              ORDER BY dh.NgayDat DESC LIMIT 5")->fetchAll();
 ?>
-
 <style>
     .status-alert {
         padding: 15px;
@@ -42,11 +33,9 @@ $recentOrders = $db->query("SELECT dh.*, kh.HoTen FROM donhang dh
         background: #ffa000;
     }
 
-
     .bg-danger {
         background: #d32f2f;
     }
-
 
     .chart-container {
         background: white;
@@ -56,31 +45,26 @@ $recentOrders = $db->query("SELECT dh.*, kh.HoTen FROM donhang dh
         margin-top: 20px;
     }
 
-
     .status.green {
         background: #E8F5E9;
         color: #2E7D32;
     }
-
 
     .status.orange {
         background: #FFF3E0;
         color: #EF6C00;
     }
 
-
     .status.blue {
         background: #E3F2FD;
         color: #1565C0;
     }
-
 
     .status.red {
         background: #FFEBEE;
         color: #C62828;
     }
 </style>
-
 <div class="main-content-inner">
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
         <?php if ($countOrderPending['total'] > 0): ?>
@@ -92,7 +76,6 @@ $recentOrders = $db->query("SELECT dh.*, kh.HoTen FROM donhang dh
                 </div>
             </div>
         <?php endif; ?>
-
         <?php if ($lowStock['total'] > 0): ?>
             <div class="status-alert bg-danger">
                 <span style="font-size: 24px;">⚠️</span>
@@ -103,7 +86,6 @@ $recentOrders = $db->query("SELECT dh.*, kh.HoTen FROM donhang dh
             </div>
         <?php endif; ?>
     </div>
-
     <section class="stats-grid">
         <div class="stat-card">
             <div class="stat-info">
@@ -112,7 +94,6 @@ $recentOrders = $db->query("SELECT dh.*, kh.HoTen FROM donhang dh
             </div>
             <div style="font-size: 30px;">📦</div>
         </div>
-
         <?php if ($_SESSION['user_role'] === 'Quản trị viên'): ?>
             <div class="stat-card">
                 <div class="stat-info">
@@ -130,7 +111,6 @@ $recentOrders = $db->query("SELECT dh.*, kh.HoTen FROM donhang dh
             </div>
         <?php endif; ?>
     </section>
-
     <?php if ($_SESSION['user_role'] === 'Quản trị viên' && !empty($chartData)): ?>
         <div class="chart-container">
             <h3 style="margin-bottom: 15px;">Biểu đồ doanh thu 7 ngày gần nhất</h3>
@@ -155,7 +135,6 @@ $recentOrders = $db->query("SELECT dh.*, kh.HoTen FROM donhang dh
             });
         </script>
     <?php endif; ?>
-
     <div class="table-container" style="margin-top: 20px;">
         <div class="main-header" style="padding: 0; margin-bottom: 15px;">
             <h3>Đơn hàng mới nhất</h3>
@@ -179,7 +158,6 @@ $recentOrders = $db->query("SELECT dh.*, kh.HoTen FROM donhang dh
                         <td><?php echo number_format($order['TongTien'], 0, ',', '.'); ?>đ</td>
                         <td>
                             <?php
-                            // Định nghĩa class màu dựa trên trạng thái
                             $statusClass = '';
                             switch ($order['TrangThai']) {
                                 case 'Hoàn thành':
@@ -187,7 +165,7 @@ $recentOrders = $db->query("SELECT dh.*, kh.HoTen FROM donhang dh
                                     break;
                                 case 'Đang giao':
                                     $statusClass = 'blue';
-                                    break; // Hoặc dùng màu khác tùy CSS của bạn
+                                    break;
                                 case 'Chờ xử lý':
                                     $statusClass = 'orange';
                                     break;
@@ -208,5 +186,4 @@ $recentOrders = $db->query("SELECT dh.*, kh.HoTen FROM donhang dh
         </table>
     </div>
 </div>
-
 <?php include_once 'includes/footer.php'; ?>

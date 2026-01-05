@@ -2,37 +2,28 @@
 // admin/Views/Sanpham/edit.php
 include_once '../../includes/header.php';
 $db = new Db();
-
-// 1. Lấy ID sản phẩm từ URL
 $id = $_GET['id'] ?? '';
 if (empty($id)) {
     header("Location: index.php");
     exit();
 }
-
-// 2. Truy vấn thông tin sản phẩm hiện tại
 $product = $db->query("SELECT * FROM sanpham WHERE MaSP = ?", [$id])->fetch();
 if (!$product) {
     echo "Sản phẩm không tồn tại!";
     exit();
 }
-
-// 3. Lấy dữ liệu cho các ô chọn (Select)
 $loaiSP = $db->query("SELECT * FROM loaisp")->fetchAll();
 $nhaCC = $db->query("SELECT * FROM nhacungcap")->fetchAll();
 $thuongHieu = $db->query("SELECT * FROM thuonghieu")->fetchAll();
 ?>
-
 <div class="main-content-inner">
     <header class="main-header">
         <h2>Chỉnh sửa sản phẩm: #<?php echo $id; ?></h2>
         <a href="index.php" style="color: var(--primary-color); text-decoration: none;">← Quay lại danh sách</a>
     </header>
-
     <div class="form-container">
         <form action="../../Controller/AdminSanphamController.php?action=edit" method="POST" enctype="multipart/form-data">
             <input type="hidden" name="maSP" value="<?php echo $product['MaSP']; ?>">
-
             <div class="form-row">
                 <div class="form-group">
                     <label class="form-label">Tên sản phẩm</label>
@@ -51,7 +42,6 @@ $thuongHieu = $db->query("SELECT * FROM thuonghieu")->fetchAll();
                     </select>
                 </div>
             </div>
-
             <div class="form-row">
                 <div class="form-group">
                     <label class="form-label">Giá bán (VNĐ)</label>
@@ -65,7 +55,6 @@ $thuongHieu = $db->query("SELECT * FROM thuonghieu")->fetchAll();
                         oninput="if(this.value < 0) this.value = 0;">
                 </div>
             </div>
-
             <div class="form-group" style="margin-bottom: 20px;">
                 <label class="form-label">Hình ảnh hiện tại</label>
                 <div style="margin-bottom: 10px;">
@@ -77,17 +66,14 @@ $thuongHieu = $db->query("SELECT * FROM thuonghieu")->fetchAll();
                 <input type="file" name="hinhAnh" class="form-control">
                 <input type="hidden" name="hinhAnhCu" value="<?php echo $product['HinhAnh']; ?>">
             </div>
-
             <div class="form-group">
                 <label class="form-label">Mô tả sản phẩm</label>
                 <textarea name="moTa" class="form-control" rows="5"><?php echo htmlspecialchars($product['MoTa']); ?></textarea>
             </div>
-
             <div style="text-align: right; margin-top: 30px;">
                 <button type="submit" class="btn-save">CẬP NHẬT SẢN PHẨM</button>
             </div>
         </form>
     </div>
 </div>
-
 <?php include_once '../../includes/footer.php'; ?>

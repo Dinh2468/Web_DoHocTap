@@ -3,53 +3,38 @@
 session_start();
 require_once '../../classes/DB.class.php';
 $db = new Db();
-
-// Kiểm tra đăng nhập
 if (!isset($_SESSION['user_id'])) {
     header("Location: ../Taikhoan/login.php");
     exit();
 }
-
 $maSP = isset($_GET['idsp']) ? $_GET['idsp'] : 0;
 $maDH = isset($_GET['iddh']) ? $_GET['iddh'] : 0;
-
-// Lấy thông tin sản phẩm để hiển thị
 $product = $db->query("SELECT TenSP, HinhAnh FROM sanpham WHERE MaSP = ?", [$maSP])->fetch();
-
 if (!$product) {
     echo "Sản phẩm không tồn tại.";
     exit();
 }
-// --- KIỂM TRA THỜI HẠN 30 NGÀY ---
 $donHang = $db->query("SELECT NgayDat FROM donhang WHERE MaDH = ?", [$maDH])->fetch();
 if ($donHang) {
     $ngayDat = new DateTime($donHang['NgayDat']);
     $ngayHienTai = new DateTime();
     $soNgay = $ngayHienTai->diff($ngayDat)->days;
-
     if ($soNgay > 30) {
         echo "<script>alert('Đã quá thời hạn 30 ngày để đánh giá sản phẩm này!'); window.location.href='../Donhang/chitiet_donhang.php?id=$maDH';</script>";
         exit();
     }
 }
-// Xử lý khi khách hàng gửi đánh giá
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $maKH = $_SESSION['user_id'];
     $sao = $_POST['rating'];
     $noidung = htmlspecialchars($_POST['noidung']);
-
-    // INSERT bản ghi mới (Không dùng UPDATE để giữ đúng số lượt đánh giá)
     $sql = "INSERT INTO danhgia (MaKH, MaSP, MaDH, SoSao, NoiDung, NgayDG) VALUES (?, ?, ?, ?, ?, NOW())";
     $db->query($sql, [$maKH, $maSP, $maDH, $sao, $noidung]);
-
-    // Quay lại trang chi tiết đơn hàng
     header("Location: ../Donhang/chitiet_donhang.php?id=" . $maDH);
     exit();
 }
-
 include_once '../includes/header.php';
 ?>
-
 <style>
     .rating-container {
         max-width: 600px;
@@ -107,7 +92,6 @@ include_once '../includes/header.php';
         width: 100%;
     }
 </style>
-
 <div class="container">
     <div class="rating-container">
         <h2 style="color: #2E7D32;">Đánh giá sản phẩm</h2>
@@ -115,11 +99,9 @@ include_once '../includes/header.php';
             <img src="/Web_DoHocTap/assets/images/Sanpham/<?php echo $product['HinhAnh']; ?>" width="100">
             <p style="font-weight: bold; margin-top: 10px;"><?php echo $product['TenSP']; ?></p>
         </div>
-
         <form action="" method="POST">
             <input type="hidden" name="maSP" value="<?php echo $maSP; ?>">
             <input type="hidden" name="maDH" value="<?php echo $maDH; ?>">
-
             <p>Bạn cảm thấy sản phẩm này thế nào?</p>
             <div class="star-rating">
                 <input type="radio" id="star5" name="rating" value="5" required /><label for="star5">★</label>
@@ -128,13 +110,10 @@ include_once '../includes/header.php';
                 <input type="radio" id="star2" name="rating" value="2" /><label for="star2">★</label>
                 <input type="radio" id="star1" name="rating" value="1" /><label for="star1">★</label>
             </div>
-
             <textarea name="noidung" class="review-textarea" placeholder="Chia sẻ trải nghiệm của bạn về sản phẩm này..." required></textarea>
-
             <button type="submit" class="btn-submit-review">GỬI ĐÁNH GIÁ</button>
             <a href="../Donhang/chitiet_donhang.php?id=<?php echo $maDH; ?>" style="display: block; margin-top: 15px; color: #666; font-size: 14px;">Quay lại</a>
         </form>
     </div>
 </div>
-
 <?php include_once '../includes/footer.php'; ?>

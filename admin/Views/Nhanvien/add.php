@@ -1,22 +1,17 @@
 <?php
 // admin/Views/Nhanvien/add.php
 include_once '../../includes/header.php';
-// Không cần khởi tạo Db ở đây vì header.php đã xử lý session và db cơ bản
 ?>
-
 <div class="main-content-inner">
     <header class="main-header">
         <h2>Thêm nhân viên mới</h2>
         <a href="index.php" style="text-decoration: none; color: var(--primary-color);">← Quay lại danh sách</a>
     </header>
-
     <div class="form-container">
         <form action="../../Controller/AdminUserController.php?action=add_employee" method="POST">
-
             <h3 style="margin-bottom: 20px; color: var(--primary-color); border-bottom: 1px solid #eee; padding-bottom: 10px;">
                 THÔNG TIN CÁ NHÂN
             </h3>
-
             <div class="form-row">
                 <div class="form-group">
                     <label class="form-label">Họ và tên</label>
@@ -31,7 +26,6 @@ include_once '../../includes/header.php';
                     </select>
                 </div>
             </div>
-
             <div class="form-row">
                 <div class="form-group">
                     <label class="form-label">Số điện thoại</label>
@@ -42,16 +36,13 @@ include_once '../../includes/header.php';
                     <input type="date" name="ngaySinh" class="form-control" required>
                 </div>
             </div>
-
             <div class="form-group" style="margin-bottom: 30px;">
                 <label class="form-label">Địa chỉ</label>
                 <input type="text" name="diaChi" class="form-control" placeholder="Địa chỉ thường trú...">
             </div>
-
             <h3 style="margin-bottom: 20px; color: var(--primary-color); border-bottom: 1px solid #eee; padding-bottom: 10px;">
                 THÔNG TIN TÀI KHOẢN
             </h3>
-
             <div class="form-row">
                 <div class="form-group">
                     <label class="form-label">Tên đăng nhập</label>
@@ -62,7 +53,6 @@ include_once '../../includes/header.php';
                     <input type="password" name="password" class="form-control" placeholder="Thiết lập mật khẩu ban đầu" required>
                 </div>
             </div>
-
             <div class="form-row">
                 <div class="form-group">
                     <label class="form-label">Email</label>
@@ -76,7 +66,6 @@ include_once '../../includes/header.php';
                     </select>
                 </div>
             </div>
-
             <div style="text-align: right; margin-top: 30px;">
                 <button type="reset" class="btn-clear" style="margin-right: 10px; cursor: pointer;">Nhập lại</button>
                 <button type="submit" class="btn-save">XÁC NHẬN THÊM</button>
@@ -89,7 +78,6 @@ include_once '../../includes/header.php';
         const form = document.querySelector('form');
         const inputs = form.querySelectorAll('input, select, textarea');
         const storageKey = 'employee_form_draft';
-
         const savedData = JSON.parse(localStorage.getItem(storageKey));
         if (savedData) {
             inputs.forEach(input => {
@@ -98,7 +86,6 @@ include_once '../../includes/header.php';
                 }
             });
         }
-
         form.addEventListener('input', function() {
             const formData = {};
             inputs.forEach(input => {
@@ -108,11 +95,9 @@ include_once '../../includes/header.php';
             });
             localStorage.setItem(storageKey, JSON.stringify(formData));
         });
-
         form.addEventListener('submit', function() {
             localStorage.removeItem(storageKey);
         });
-
         const btnReset = document.querySelector('.btn-clear');
         if (btnReset) {
             btnReset.addEventListener('click', function() {

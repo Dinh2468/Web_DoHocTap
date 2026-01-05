@@ -4,15 +4,12 @@ session_start();
 require_once '../classes/Sanpham.class.php';
 require_once '../classes/Giohang.class.php';
 require_once '../classes/Chitiet_Giohang.class.php';
-
 $ghModel = new Giohang();
 $ctghModel = new Chitiet_Giohang();
 $spModel = new Sanpham();
 $ds_sanpham = [];
 $tongTien = 0;
-
 if (isset($_SESSION['user_id'])) {
-    // Lấy từ Database như cũ
     $maKH = $_SESSION['user_id'];
     $gioHang = $ghModel->lay_theo_khach_hang($maKH);
     if ($gioHang) {
@@ -20,7 +17,6 @@ if (isset($_SESSION['user_id'])) {
         $tongTien = $gioHang['TongTien'];
     }
 } else {
-    // Lấy từ SESSION cho khách vãng lai
     if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
         foreach ($_SESSION['cart'] as $maSP => $sl) {
             $sp = $spModel->getById($maSP);
@@ -38,10 +34,8 @@ if (isset($_SESSION['user_id'])) {
         }
     }
 }
-// Tìm dòng 35 (sau khi đã có $ds_sanpham) và chèn đoạn này:
 $canCheckout = true;
 foreach ($ds_sanpham as $item) {
-    // Nếu có bất kỳ sản phẩm nào vượt quá tồn kho, khóa nút thanh toán
     if (isset($item['SoLuongTon']) && $item['SoLuong'] > $item['SoLuongTon']) {
         $canCheckout = false;
         break;
@@ -49,7 +43,6 @@ foreach ($ds_sanpham as $item) {
 }
 include_once 'includes/header.php';
 ?>
-
 <style>
     .cart-container {
         margin: 40px auto;
@@ -144,7 +137,6 @@ include_once 'includes/header.php';
         cursor: pointer;
     }
 </style>
-
 <div class="container cart-container">
     <h2 class="section-title">Giỏ hàng của bạn</h2>
     <?php if (isset($_GET['error']) && $_GET['error'] == 'out_of_stock'): ?>
@@ -159,7 +151,6 @@ include_once 'includes/header.php';
     <?php if (!empty($ds_sanpham)): ?>
         <form action="../controller/GiohangController.php" method="POST">
             <input type="hidden" name="action" value="update">
-
             <table class="cart-table">
                 <thead>
                     <tr>
@@ -173,7 +164,6 @@ include_once 'includes/header.php';
                 </thead>
                 <tbody>
                     <?php foreach ($ds_sanpham as $item):
-                        // Kiểm tra xem sản phẩm này có vượt quá tồn kho không
                         $isOverstock = (isset($item['SoLuongTon']) && $item['SoLuong'] > $item['SoLuongTon']);
                     ?>
                         <tr style="<?php echo $isOverstock ? 'background-color: #FFF9F9; border-left: 4px solid #d32f2f;' : ''; ?>">
@@ -191,7 +181,6 @@ include_once 'includes/header.php';
                                 <div style="display: flex; flex-direction: column; align-items: center; gap: 5px;">
                                     <div style="display: flex; justify-content: center; align-items: center; gap: 5px;">
                                         <button type="button" class="qty-btn" onclick="this.parentNode.querySelector('input').stepDown()">-</button>
-
                                         <input type="number"
                                             name="sl[<?php echo $item['MaSP']; ?>]"
                                             value="<?php echo $item['SoLuong']; ?>"
@@ -199,7 +188,6 @@ include_once 'includes/header.php';
                                             max="<?php echo $item['SoLuongTon']; ?>"
                                             class="quantity-input"
                                             style="width: 50px; <?php echo $isOverstock ? 'border-color: #d32f2f; background: #FFF0F0;' : ''; ?>">
-
                                         <button type="button" class="qty-btn" onclick="this.parentNode.querySelector('input').stepUp()">+</button>
                                     </div>
                                     <small style="color: <?php echo $isOverstock ? '#d32f2f' : '#666'; ?>; font-size: 11px; font-weight: <?php echo $isOverstock ? 'bold' : 'normal'; ?>;">
@@ -215,17 +203,13 @@ include_once 'includes/header.php';
                     <?php endforeach; ?>
                 </tbody>
             </table>
-
             <div class="cart-summary">
                 <div class="total-price">Tổng cộng: <?php echo number_format($tongTien, 0, ',', '.'); ?> VNĐ</div>
-
                 <div style="display: flex; justify-content: flex-end; align-items: center; gap: 15px;">
                     <a href="../index.php" style="color: #666; text-decoration: none;">← Tiếp tục mua sắm</a>
-
                     <button type="submit" name="action" value="update" class="btn-checkout" style="border: none; cursor: pointer; background: #4CAF50;">
                         CẬP NHẬT GIỎ HÀNG
                     </button>
-
                     <?php if (isset($_SESSION['user_id'])): ?>
                         <?php if ($canCheckout): ?>
                             <a href="Thanhtoan/thanhtoan.php" class="btn-checkout">TIẾN HÀNH THANH TOÁN</a>
@@ -256,16 +240,13 @@ include_once 'includes/header.php';
             const val = parseInt(this.value);
             const parentRow = this.closest('tr');
             const stockInfo = parentRow.querySelector('small');
-
             if (val > max) {
-                // Đổi sang màu cảnh báo lỗi
                 this.style.borderColor = '#d32f2f';
                 this.style.backgroundColor = '#FFF0F0';
                 parentRow.style.backgroundColor = '#FFF9F9';
                 stockInfo.style.color = '#d32f2f';
                 stockInfo.style.fontWeight = 'bold';
             } else {
-                // Trả về màu bình thường
                 this.style.borderColor = '#ddd';
                 this.style.backgroundColor = '#fff';
                 parentRow.style.backgroundColor = 'transparent';

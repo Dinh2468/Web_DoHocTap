@@ -3,24 +3,20 @@
 session_start();
 require_once __DIR__ . '/../../classes/DB.class.php';
 $current_page = $_SERVER['REQUEST_URI'];
-// Kiểm tra: Nếu chưa đăng nhập HOẶC (không phải Admin VÀ không phải Nhân viên)
 if (
     !isset($_SESSION['user_role']) ||
     ($_SESSION['user_role'] !== 'Quản trị viên' && $_SESSION['user_role'] !== 'Nhân viên')
 ) {
-
     header("Location: /Web_DoHocTap/Views/Taikhoan/login.php");
     exit();
 }
 ?>
 <!DOCTYPE html>
 <html lang="vi">
-
 <head>
     <meta charset="UTF-8">
     <title>Admin - Thiên Đường Dụng Cụ Học Tập</title>
     <style>
-        /* Sử dụng lại bộ CSS từ file admin.html của bạn */
         :root {
             --primary-color: #2E7D32;
             --accent-color: #4CAF50;
@@ -28,20 +24,17 @@ if (
             --white: #FFFFFF;
             --text-color: #333;
         }
-
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             font-family: 'Segoe UI', sans-serif;
         }
-
         body {
             display: flex;
             height: 100vh;
             background-color: var(--bg-color);
         }
-
         .sidebar {
             width: 260px;
             background-color: var(--primary-color);
@@ -49,18 +42,15 @@ if (
             position: fixed;
             height: 100%;
         }
-
         .sidebar-header {
             padding: 20px;
             text-align: center;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
-
         .sidebar-menu {
             list-style: none;
             padding: 20px 0;
         }
-
         .sidebar-menu li a {
             display: block;
             padding: 15px 25px;
@@ -68,7 +58,6 @@ if (
             text-decoration: none;
             transition: 0.3s;
         }
-
         .sidebar-menu li a:hover,
         .sidebar-menu li a.active {
             background: var(--accent-color);
@@ -76,29 +65,24 @@ if (
             border-left: 5px solid #fff;
             padding-left: 20px;
         }
-
         .main-content {
             flex: 1;
             margin-left: 260px;
             padding: 30px;
             overflow-y: auto;
         }
-
         .main-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 30px;
         }
-
-        /* Thêm các class stats và table từ file admin.html gốc của bạn vào đây */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 20px;
             margin-bottom: 30px;
         }
-
         .stat-card {
             background: var(--white);
             padding: 20px;
@@ -108,52 +92,40 @@ if (
             justify-content: space-between;
             align-items: center;
         }
-
         .table-container {
             background: var(--white);
             padding: 25px;
             border-radius: 10px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
         }
-
         table {
             width: 100%;
             border-collapse: collapse;
         }
-
         table th,
         table td {
             text-align: left;
             padding: 15px;
             border-bottom: 1px solid #ddd;
         }
-
         .status {
             padding: 5px 10px;
             border-radius: 15px;
             font-size: 12px;
             font-weight: bold;
         }
-
         .status.green {
             background: #E8F5E9;
             color: #2E7D32;
         }
-
-        /* Bổ sung vào cuối thẻ <style> của admin/includes/header.php */
-
-        /* Thu nhỏ ảnh sản phẩm trong danh sách */
         .product-thumb {
             width: 80px;
             height: 80px;
             object-fit: contain;
-            /* Giữ nguyên tỉ lệ ảnh không bị bóp méo */
             border: 1px solid #eee;
             border-radius: 5px;
             background: #fff;
         }
-
-        /* Thanh công cụ tìm kiếm và bộ lọc */
         .toolbar {
             background: var(--white);
             padding: 15px;
@@ -164,7 +136,6 @@ if (
             margin-bottom: 20px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
         }
-
         .search-input,
         .filter-select {
             padding: 8px 15px;
@@ -172,8 +143,6 @@ if (
             border-radius: 20px;
             outline: none;
         }
-
-        /* Nút thêm mới sản phẩm */
         .btn-create {
             background: var(--accent-color);
             color: white;
@@ -182,24 +151,19 @@ if (
             font-weight: bold;
             transition: 0.3s;
         }
-
         .btn-create:hover {
             background: #388E3C;
         }
-
-        /* Các nút hành động Sửa/Xóa */
         .action-group {
             display: flex;
             gap: 10px;
         }
-
         .btn-action {
             text-decoration: none;
             padding: 5px 10px;
             border-radius: 4px;
             font-size: 16px;
         }
-
         .btn-edit {
             background: #E3F2FD;
             color: #1976D2;
@@ -210,43 +174,34 @@ if (
             border-radius: 4px;
             transition: 0.3s;
         }
-
         .btn-delete {
             background: #FFEBEE;
             color: #C62828;
             border: none !important;
             text-decoration: none;
         }
-
         .form-container {
             background: var(--white);
             padding: 30px;
             border-radius: 12px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
         }
-
-        /* Sắp xếp các ô nhập liệu trên cùng 1 hàng */
         .form-row {
             display: flex;
             gap: 20px;
             margin-bottom: 20px;
         }
-
         .form-group {
             flex: 1;
             display: flex;
             flex-direction: column;
         }
-
-        /* Nhãn tiêu đề ô nhập */
         .form-label {
             font-weight: 600;
             color: #444;
             margin-bottom: 8px;
             font-size: 14px;
         }
-
-        /* Ô nhập liệu và Select */
         .form-control {
             padding: 12px 15px;
             border: 1px solid #ddd;
@@ -256,14 +211,11 @@ if (
             transition: border-color 0.3s;
             background-color: #fcfcfc;
         }
-
         .form-control:focus {
             border-color: var(--accent-color);
             background-color: #fff;
             box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
         }
-
-        /* Nút Lưu sản phẩm đồng bộ với nút Thêm mới */
         .btn-save {
             background-color: var(--accent-color);
             color: white;
@@ -276,23 +228,16 @@ if (
             transition: 0.3s;
             display: inline-block;
         }
-
         .btn-save:hover {
             background-color: #388E3C;
             transform: translateY(-2px);
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
-
-
-
-        /* Tối ưu thanh công cụ lọc */
         .toolbar form {
             display: flex;
             align-items: center;
             gap: 12px;
         }
-
-        /* Đồng bộ nút Lọc */
         .btn-filter {
             background-color: var(--accent-color);
             color: white;
@@ -306,13 +251,10 @@ if (
             align-items: center;
             justify-content: center;
         }
-
         .btn-filter:hover {
             background-color: #388E3C;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
-
-        /* Đồng bộ nút Xóa lọc */
         .btn-clear {
             background-color: #f0f0f0;
             color: #555;
@@ -327,23 +269,17 @@ if (
             align-items: center;
             justify-content: center;
         }
-
         .btn-clear:hover {
             background-color: #e0e0e0;
             color: #333;
             border-color: #ccc;
         }
-
-        /* admin/includes/header.php */
-
         .btn-print {
             background-color: #455a64;
-            /* Màu xám đậm chuyên nghiệp */
             color: white;
             padding: 10px 20px;
             border: none;
             border-radius: 25px;
-            /* Bo tròn đồng bộ với các nút khác */
             font-weight: 600;
             cursor: pointer;
             display: flex;
@@ -351,16 +287,12 @@ if (
             gap: 8px;
             transition: 0.3s;
         }
-
         .btn-print:hover {
             background-color: #263238;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             transform: translateY(-1px);
         }
-
         @media print {
-
-            /* Ẩn tất cả các thành phần không cần thiết khi in */
             .btn-print,
             .sidebar,
             .main-header,
@@ -375,69 +307,52 @@ if (
             hr {
                 display: none !important;
             }
-
-            /* Mở rộng nội dung chính ra toàn trang */
             .main-content {
                 margin-left: 0 !important;
                 padding: 0 !important;
                 width: 100% !important;
             }
-
-            /* Hiển thị các thẻ thống kê theo hàng ngang hoặc dọc tùy độ rộng */
             .stats-grid {
                 display: flex !important;
                 gap: 10px !important;
                 margin-bottom: 20px !important;
             }
-
             .stat-card {
                 flex: 1;
                 border: 1px solid #ddd !important;
-                /* Thêm viền để rõ ràng khi in trắng đen */
                 box-shadow: none !important;
                 margin-bottom: 20px !important;
             }
-
             h2,
             h3 {
                 color: black !important;
             }
-
-            /* Đảm bảo biểu đồ hiển thị đúng kích thước */
             canvas {
                 max-width: 100% !important;
                 height: auto !important;
             }
-
-            /* Bảng chi tiết phải hiện rõ nét */
             table {
                 width: 100% !important;
                 border-collapse: collapse !important;
             }
-
             th,
             td {
-
                 border: 1px solid #eee !important;
                 padding: 8px !important;
             }
         }
-
         /* Khách hàng */
-        /* CSS cho nút gạt trạng thái */
         .switch {
             position: relative;
             display: inline-block;
             width: 34px;
             height: 20px;
         }
-
         .switch input {
             opacity: 0;
             width: 0;
             height: 0;
         }
-
         .slider {
             position: absolute;
             cursor: pointer;
@@ -449,7 +364,6 @@ if (
             transition: .4s;
             border-radius: 34px;
         }
-
         .slider:before {
             position: absolute;
             content: "";
@@ -461,16 +375,12 @@ if (
             transition: .4s;
             border-radius: 50%;
         }
-
         input:checked+.slider {
             background-color: var(--accent-color);
         }
-
         input:checked+.slider:before {
             transform: translateX(14px);
         }
-
-        /* Avatar hình tròn */
         .user-avatar {
             width: 40px;
             height: 40px;
@@ -482,27 +392,23 @@ if (
             align-items: center;
             font-weight: bold;
         }
-
         .btn-view-profile {
             background-color: transparent;
             color: #555;
             border: 1px solid #ddd;
             padding: 6px 14px;
             border-radius: 6px;
-            /* Bo góc nhẹ */
             font-size: 13px;
             font-weight: 500;
             cursor: pointer;
             transition: all 0.3s ease;
         }
-
         .btn-view-profile:hover {
             background-color: #f8f9fa;
             border-color: var(--primary-color);
             color: var(--primary-color);
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
         }
-
         .modal-overlay {
             display: none;
             position: fixed;
@@ -515,29 +421,24 @@ if (
             justify-content: center;
             align-items: center;
         }
-
         .modal-content {
             background: white;
             width: 800px;
             display: flex;
-            /* Chia đôi modal: trái info, phải lịch sử */
             border-radius: 12px;
             overflow: hidden;
             animation: fadeIn 0.3s ease;
         }
-
         .profile-side {
             flex: 1;
             background: #f8f9fa;
             padding: 30px;
             border-right: 1px solid #eee;
         }
-
         .history-side {
             flex: 2;
             padding: 30px;
         }
-
         .large-avatar {
             width: 80px;
             height: 80px;
@@ -550,19 +451,16 @@ if (
             align-items: center;
             margin: 0 auto 15px;
         }
-
         .stat-row {
             margin-bottom: 12px;
             font-size: 14px;
         }
-
         .stat-row span {
             color: #777;
             display: block;
         }
     </style>
 </head>
-
 <body>
     <aside class="sidebar">
         <div class="sidebar-header">
@@ -599,7 +497,6 @@ if (
                     Khách hàng
                 </a>
             </li>
-
             <?php if ($_SESSION['user_role'] === 'Quản trị viên'): ?>
                 <li>
                     <a href="/Web_DoHocTap/admin/Views/Danhmuc/index.php"

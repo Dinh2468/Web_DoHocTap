@@ -6,7 +6,6 @@ if ($_SESSION['user_role'] !== 'Quản trị viên') {
     exit();
 }
 $db = new Db();
-
 $sql = "SELECT dg.*, kh.HoTen, sp.TenSP, sp.HinhAnh 
         FROM danhgia dg
         JOIN khachhang kh ON dg.MaKH = kh.MaKH
@@ -14,12 +13,10 @@ $sql = "SELECT dg.*, kh.HoTen, sp.TenSP, sp.HinhAnh
         ORDER BY dg.NgayDG DESC";
 $reviews = $db->query($sql)->fetchAll();
 ?>
-
 <div class="main-content-inner">
     <header class="main-header">
         <h2>Quản lý Đánh giá khách hàng</h2>
     </header>
-
     <div class="table-container">
         <table>
             <thead>

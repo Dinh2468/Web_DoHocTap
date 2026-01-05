@@ -2,56 +2,40 @@
 // admin/Views/Donhang/index.php
 include_once '../../includes/header.php';
 $db = new Db();
-
-// 1. Tiếp nhận dữ liệu lọc từ URL
 $search = $_GET['search'] ?? '';
 $date = $_GET['date'] ?? '';
 $status = $_GET['status'] ?? '';
-
-// 2. Xây dựng câu lệnh SQL có điều kiện lọc
 $sql = "SELECT dh.*, kh.HoTen, kh.SDT 
         FROM donhang dh 
         JOIN khachhang kh ON dh.MaKH = kh.MaKH 
-        WHERE 1=1"; // Điều kiện mặc định để nối chuỗi dễ hơn
-
+        WHERE 1=1";
 $params = [];
-
 if (!empty($search)) {
     $sql .= " AND (dh.MaDH LIKE ? OR kh.HoTen LIKE ?)";
     $params[] = "%$search%";
     $params[] = "%$search%";
 }
-
-// Lọc theo ngày đặt hàng
 if (!empty($date)) {
     $sql .= " AND DATE(dh.NgayDat) = ?";
     $params[] = $date;
 }
-
-// Lọc theo trạng thái đơn hàng
 if (!empty($status)) {
     $sql .= " AND dh.TrangThai = ?";
     $params[] = $status;
 }
-
 $sql .= " ORDER BY dh.NgayDat DESC";
 $orders = $db->query($sql, $params)->fetchAll();
-
 ?>
-
 <div class="main-content-inner">
     <header class="main-header">
         <h2>Danh sách đơn hàng</h2>
     </header>
-
     <div class="toolbar">
         <form action="" method="GET">
             <input type="text" name="search" class="search-input" style="flex: 10; min-width: 450px;"
                 placeholder="Tìm theo mã đơn, tên khách..." value="<?php echo htmlspecialchars($search); ?>">
-
             <input type="date" name="date" class="filter-select" style="flex: 1;"
                 value="<?php echo htmlspecialchars($date); ?>">
-
             <select name="status" class="filter-select" style="flex: 1;">
                 <option value="">Tất cả trạng thái</option>
                 <option value="Chờ xử lý" <?php echo ($status == 'Chờ xử lý') ? 'selected' : ''; ?>>Chờ xử lý</option>
@@ -59,13 +43,10 @@ $orders = $db->query($sql, $params)->fetchAll();
                 <option value="Hoàn thành" <?php echo ($status == 'Hoàn thành') ? 'selected' : ''; ?>>Hoàn thành</option>
                 <option value="Đã hủy" <?php echo ($status == 'Đã hủy') ? 'selected' : ''; ?>>Đã hủy</option>
             </select>
-
             <button type="submit" class="btn-filter">Lọc</button>
-
             <a href="index.php" class="btn-clear">Xóa lọc</a>
         </form>
     </div>
-
     <div class="table-container">
         <table>
             <thead>
@@ -74,7 +55,6 @@ $orders = $db->query($sql, $params)->fetchAll();
                     <th>Khách hàng</th>
                     <th>Ngày đặt</th>
                     <th>Tổng tiền</th>
-
                     <th>Trạng thái</th>
                     <th>Hành động</th>
                 </tr>
@@ -91,7 +71,6 @@ $orders = $db->query($sql, $params)->fetchAll();
                         <td style="font-weight: bold; color: var(--danger-color);">
                             <?php echo number_format($order['TongTien'], 0, ',', '.'); ?>đ
                         </td>
-
                         <td>
                             <?php
                             $statusClass = '';
@@ -121,5 +100,4 @@ $orders = $db->query($sql, $params)->fetchAll();
         </table>
     </div>
 </div>
-
 <?php include_once '../../includes/footer.php'; ?>
