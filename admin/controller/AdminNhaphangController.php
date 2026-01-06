@@ -80,7 +80,7 @@ if ($action == 'get_detail') {
                 $grandTotal += $subtotal;
                 $hinhAnh = !empty($row['HinhAnh']) ? $row['HinhAnh'] : 'default.jpg';
                 echo "<tr>
-                        <td><img src='../../assets/images/Sanpham/{$hinhAnh}' width='45' style='border-radius:4px;'></td>
+                        <td><img src='/Web_DoHocTap/assets/images/Sanpham/{$hinhAnh}' width='45' style='border-radius:4px;'></td>
                         <td>{$row['TenSP']}</td>
                         <td>{$row['SoLuong']}</td>
                         <td>" . number_format($row['DonGia']) . "đ</td>

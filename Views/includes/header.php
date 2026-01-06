@@ -3,6 +3,7 @@
 ?>
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,6 +16,7 @@
             --text-color: #333333;
             --white: #FFFFFF;
         }
+
         .header,
         .footer {
             background-color: #2E7D32;
@@ -23,19 +25,23 @@
             /* Chữ màu trắng */
             padding: 20px 0;
         }
+
         .footer a {
             color: #E8F5E9;
             text-decoration: none;
         }
+
         .footer a:hover {
             text-decoration: underline;
         }
+
         /* Thanh menu bên dưới Header */
         .navbar {
             background-color: #FFFFFF;
             border-bottom: 1px solid #ddd;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
         }
+
         /* Nút Đăng nhập trên menu */
         .btn-login-nav {
             background-color: #4CAF50;
@@ -45,6 +51,7 @@
             padding: 5px 15px;
             border: none;
         }
+
         h3.section-title {
             color: #2E7D32;
             text-transform: uppercase;
@@ -54,6 +61,7 @@
             position: relative;
             display: inline-block;
         }
+
         h3.section-title::after {
             content: '';
             display: block;
@@ -65,6 +73,7 @@
     </style>
     <!DOCTYPE html>
     <html lang="vi">
+
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -77,30 +86,36 @@
                 --text-color: #333333;
                 --white: #FFFFFF;
             }
+
             * {
                 margin: 0;
                 padding: 0;
                 box-sizing: border-box;
             }
+
             body {
                 font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
                 background-color: var(--bg-color);
                 color: var(--text-color);
                 line-height: 1.6;
             }
+
             a {
                 text-decoration: none;
                 color: inherit;
             }
+
             ul {
                 list-style: none;
             }
+
             .container {
                 width: 1200px;
                 max-width: 100%;
                 margin: 0 auto;
                 padding: 0 15px;
             }
+
             /* HEADER */
             .top-header {
                 background-color: var(--primary-color);
@@ -108,11 +123,13 @@
                 padding: 20px 0;
                 text-align: center;
             }
+
             .top-header h1 {
                 font-size: 28px;
                 text-transform: uppercase;
                 letter-spacing: 1px;
             }
+
             /* MENU */
             .navbar {
                 background-color: var(--white);
@@ -121,26 +138,31 @@
                 top: 0;
                 z-index: 1000;
             }
+
             .nav-content {
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
                 height: 60px;
             }
+
             .nav-links {
                 display: flex;
                 gap: 20px;
                 font-weight: 600;
                 font-size: 14px;
             }
+
             .nav-links li a:hover {
                 color: var(--accent-color);
             }
+
             .search-login-area {
                 display: flex;
                 align-items: center;
                 gap: 15px;
             }
+
             .search-box {
                 padding: 5px 10px;
                 border: 1px solid #ddd;
@@ -148,6 +170,7 @@
                 outline: none;
                 width: 200px;
             }
+
             .btn-login {
                 background-color: var(--accent-color);
                 color: var(--white);
@@ -157,9 +180,11 @@
                 font-weight: bold;
                 transition: background 0.3s;
             }
+
             .btn-login:hover {
                 background-color: #388E3C;
             }
+
             /* BANNER */
             .banner {
                 background-color: #E8F5E9;
@@ -170,31 +195,37 @@
                 justify-content: space-between;
                 overflow: hidden;
             }
+
             .banner-content {
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
                 width: 100%;
             }
+
             .banner-img-side {
                 width: 250px;
                 height: auto;
             }
+
             .banner-text {
                 text-align: center;
                 flex: 1;
             }
+
             .banner-text h2 {
                 font-size: 36px;
                 color: #2E7D32;
                 margin-bottom: 10px;
                 text-transform: uppercase;
             }
+
             .banner-text p {
                 font-size: 18px;
                 color: #555;
                 margin-bottom: 20px;
             }
+
             /* SẢN PHẨM */
             .section-title {
                 text-align: center;
@@ -203,6 +234,7 @@
                 margin-bottom: 30px;
                 position: relative;
             }
+
             .section-title::after {
                 content: '';
                 display: block;
@@ -211,12 +243,14 @@
                 background-color: var(--accent-color);
                 margin: 10px auto;
             }
+
             .product-grid {
                 display: grid;
                 grid-template-columns: repeat(4, 1fr);
                 gap: 20px;
                 margin-bottom: 50px;
             }
+
             .product-card {
                 background-color: var(--white);
                 border-radius: 8px;
@@ -226,24 +260,29 @@
                 text-align: center;
                 padding-bottom: 15px;
             }
+
             .product-card:hover {
                 transform: translateY(-5px);
             }
+
             .product-img {
                 width: 100%;
                 height: 200px;
                 background-color: #ddd;
                 margin-bottom: 10px;
             }
+
             .product-name {
                 font-weight: bold;
                 margin-bottom: 5px;
                 font-size: 15px;
             }
+
             .product-price {
                 color: #d32f2f;
                 font-weight: bold;
             }
+
             .btn-view-all {
                 display: block;
                 width: 150px;
@@ -255,9 +294,11 @@
                 border-radius: 5px;
                 font-weight: 600;
             }
+
             .btn-view-all:hover {
                 background-color: #ccc;
             }
+
             .btn-buy-now {
                 background-color: #4CAF50;
                 color: white;
@@ -270,6 +311,7 @@
                 width: 80%;
                 transition: 0.3s;
             }
+
             .btn-buy-now {
                 background-color: #4CAF50;
                 color: white;
@@ -287,11 +329,13 @@
                 text-transform: uppercase;
                 letter-spacing: 1px;
             }
+
             .btn-buy-now:hover {
                 background-color: #2E7D32;
                 transform: translateY(-2px);
                 box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
             }
+
             /* TIN TỨC */
             .news-grid {
                 display: grid;
@@ -299,6 +343,7 @@
                 gap: 20px;
                 margin-bottom: 50px;
             }
+
             .news-card img {
                 width: 100%;
                 height: 150px;
@@ -306,11 +351,13 @@
                 background-color: #ddd;
                 border-radius: 5px;
             }
+
             .news-title {
                 margin-top: 10px;
                 font-weight: bold;
                 font-size: 14px;
             }
+
             /* THƯƠNG HIỆU */
             .brands-row {
                 display: flex;
@@ -318,6 +365,7 @@
                 margin-bottom: 50px;
                 gap: 10px;
             }
+
             .brand-box {
                 background-color: var(--accent-color);
                 color: white;
@@ -327,6 +375,7 @@
                 border-radius: 4px;
                 font-size: 12px;
             }
+
             /* Index */
             .section-wrapper {
                 margin: 30px auto;
@@ -335,6 +384,7 @@
                 border-radius: 8px;
                 box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
             }
+
             .section-header {
                 display: flex;
                 justify-content: space-between;
@@ -343,16 +393,19 @@
                 border-bottom: 2px solid #f0f0f0;
                 padding-bottom: 10px;
             }
+
             .product-slider {
                 display: flex;
                 overflow-x: hidden;
                 scroll-behavior: smooth;
                 gap: 15px;
             }
+
             .slider-item {
                 min-width: calc(25% - 12px);
                 position: relative;
             }
+
             .nav-arrow {
                 position: absolute;
                 width: 35px;
@@ -364,12 +417,16 @@
                 z-index: 10;
                 box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
             }
+
             .prev {
-                left: -18px;
+                left: 20px;
+
             }
+
             .next {
-                right: -18px;
+                right: 10px;
             }
+
             .discount-badge {
                 position: absolute;
                 top: 10px;
@@ -381,6 +438,7 @@
                 border-radius: 50%;
                 z-index: 5;
             }
+
             /* FOOTER */
             footer {
                 background-color: var(--primary-color);
@@ -388,11 +446,13 @@
                 padding: 40px 0;
                 font-size: 14px;
             }
+
             .footer-grid {
                 display: grid;
                 grid-template-columns: repeat(4, 1fr);
                 gap: 30px;
             }
+
             .footer-col h4 {
                 margin-bottom: 15px;
                 text-transform: uppercase;
@@ -400,12 +460,15 @@
                 padding-bottom: 10px;
                 display: inline-block;
             }
+
             .footer-col ul li {
                 margin-bottom: 8px;
             }
+
             .footer-col ul li a:hover {
                 text-decoration: underline;
             }
+
             /* thông báo */
             #toast-container {
                 position: fixed;
@@ -413,6 +476,7 @@
                 right: 20px;
                 z-index: 10000;
             }
+
             .toast {
                 background-color: #2E7D32;
                 color: white;
@@ -426,16 +490,19 @@
                 font-weight: bold;
                 animation: slideIn 0.3s ease-out;
             }
+
             @keyframes slideIn {
                 from {
                     transform: translateX(100%);
                     opacity: 0;
                 }
+
                 to {
                     transform: translateX(0);
                     opacity: 1;
                 }
             }
+
             /* Tên đăng nhập */
             .user-info-nav span {
                 font-size: 14px;
@@ -444,10 +511,12 @@
                 border-radius: 15px;
                 border: 1px solid #4CAF50;
             }
+
             .user-dropdown {
                 position: relative;
                 display: inline-block;
             }
+
             .user-name-btn {
                 background: #E8F5E9;
                 padding: 5px 15px;
@@ -460,6 +529,7 @@
                 align-items: center;
                 gap: 5px;
             }
+
             /* Menu ẩn */
             .dropdown-content {
                 display: none;
@@ -473,6 +543,7 @@
                 margin-top: 10px;
                 overflow: hidden;
             }
+
             .dropdown-content a {
                 color: #333;
                 padding: 12px 16px;
@@ -482,24 +553,29 @@
                 border-bottom: 1px solid #eee;
                 transition: background 0.2s;
             }
+
             .dropdown-content a:hover {
                 background-color: #f1f1f1;
                 color: #2E7D32;
             }
+
             .show {
                 display: block;
                 animation: fadeIn 0.2s ease-out;
             }
+
             @keyframes fadeIn {
                 from {
                     opacity: 0;
                     transform: translateY(-10px);
                 }
+
                 to {
                     opacity: 1;
                     transform: translateY(0);
                 }
             }
+
             .cart-badge {
                 position: absolute;
                 top: -5px;
@@ -520,6 +596,7 @@
             }
         </style>
     </head>
+
 <body>
     <header class="top-header">
         <div class="container">

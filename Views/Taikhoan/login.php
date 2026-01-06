@@ -207,11 +207,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <input type="password" name="password" placeholder="Nhập mật khẩu..." required>
             <button type="submit" class="btn-login">Đăng nhập</button>
         </form>
-        <div class="divider">HOẶC</div>
+        <!-- <div class="divider">HOẶC</div>
         <button type="button" class="btn-google" onclick="alert('Tính năng Đăng nhập Google đang được phát triển!')">
             <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18">
             Tiếp tục với Google
-        </button>
+        </button> -->
         <div class="register-link">
             Bạn chưa có tài khoản? <a href="dangky.php">Đăng ký ngay</a>
         </div>

@@ -58,7 +58,7 @@ include_once 'Views/includes/header.php';
             <a href="Views/Sanpham/sanpham.php" class="view-more-link">Xem thêm »</a>
         </div>
         <div class="slider-outer">
-            <button class="nav-arrow prev" onclick="moveSlider('sliderHot', -1)">❮</button>
+
             <div id="sliderHot" class="product-slider">
                 <?php if ($ds_sanpham_hot): ?>
                     <?php foreach ($ds_sanpham_hot as $sp): ?>
@@ -70,6 +70,7 @@ include_once 'Views/includes/header.php';
                     <p>Đang cập nhật sản phẩm nổi bật...</p>
                 <?php endif; ?>
             </div>
+            <button class="nav-arrow prev" onclick="moveSlider('sliderHot', -1)">❮</button>
             <button class="nav-arrow next" onclick="moveSlider('sliderHot', 1)">❯</button>
         </div>
     </div>
